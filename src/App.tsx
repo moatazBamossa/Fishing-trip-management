@@ -1,8 +1,8 @@
-import './App.css';
-import { Button } from './components/ui/button';
+import './index.css';
+import InterFace from './lib/InterFace/InterFace';
 
 function App() {
-  return <Button variant="link">Click me</Button>;
+  return <InterFace />;
 }
 
 export default App;
