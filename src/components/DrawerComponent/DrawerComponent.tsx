@@ -18,6 +18,7 @@ import { FC } from 'react';
 type DrawerDialogDemoProps = {
   isOpen: boolean;
   children: JSX.Element;
+  onOpenChange: (v: boolean) => void;
 };
 
 const DrawerDialogDemo: FC<DrawerDialogDemoProps> = (props) => {
@@ -26,7 +27,7 @@ const DrawerDialogDemo: FC<DrawerDialogDemoProps> = (props) => {
 
   if (isDesktop) {
     return (
-      <Dialog open={isOpen}>
+      <Dialog onOpenChange={props.onOpenChange} open={isOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
@@ -41,7 +42,7 @@ const DrawerDialogDemo: FC<DrawerDialogDemoProps> = (props) => {
   }
 
   return (
-    <Drawer open={isOpen}>
+    <Drawer onOpenChange={props.onOpenChange} open={isOpen}>
       <DrawerContent>
         <DrawerHeader className="text-left">
           <DrawerTitle>Edit profile</DrawerTitle>

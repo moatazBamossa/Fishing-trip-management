@@ -1,0 +1,16 @@
+.detail {
+  margin-bottom: 15px;
+}
+
+.detail strong {
+  font-weight: bold;
+}
+
+.detail ul {
+  padding-left: 20px;
+}
+
+.detail ul li {
+  list-style-type: disc;
+  margin-left: 10px;
+}
