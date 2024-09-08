@@ -12,6 +12,8 @@ export type ValuesType = {
   owner_shared: string;
   fisher_shared: string;
   other_shared: string;
+  RateBoat?: boolean;
+  RateBoatPrice?: string;
 };
 
 export type CalculationResultType = {

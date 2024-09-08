@@ -1,12 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import { Form } from 'react-final-form';
+import { Field, Form } from 'react-final-form';
 import { ConstData } from './InterFace';
 
 import Container from '@/components/Container';
 import { CalculationResultType, Expense, required, ValuesType } from './helper';
 import TextField from '@/components/TextField';
 import Details from './Details';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const retrievedData = localStorage?.getItem('userData');
 const constData: ConstData = retrievedData && JSON.parse(retrievedData);
@@ -132,12 +133,9 @@ const DataEntry = () => {
                   }}
                 >
                   <TextField name="name_boat" placeholder="اسم القارب" />
+                  <TextField name="typeFish" placeholder="نوع الصيد " />
                   <TextField type="number" name="kilo" placeholder="كم كيلو " />
-                  <TextField
-                    type="number"
-                    name="price_kilo"
-                    placeholder="سعر الكيلو "
-                  />
+                  <TextField name="price_kilo" placeholder="سعر الكيلو " />
                 </div>
               </Container>
               <Container
@@ -174,6 +172,38 @@ const DataEntry = () => {
                   <Button variant="default" type="button" onClick={addField}>
                     Add New Boat
                   </Button>
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: 8,
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <label
+                      htmlFor="terms"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      هل القارب ايجار ؟
+                    </label>
+
+                    <Field name="isBoatRate">
+                      {(): JSX.Element => (
+                        <Checkbox
+                          id="terms"
+                          onCheckedChange={(isCheck) => {
+                            form.change('RateBoat', isCheck);
+                          }}
+                        />
+                      )}
+                    </Field>
+                  </div>
+                  {values?.RateBoat && (
+                    <TextField
+                      placeholder="مبلغ ايجار القارب"
+                      name="RateBoatPrice"
+                    />
+                  )}
                 </div>
               </Container>
               <Container

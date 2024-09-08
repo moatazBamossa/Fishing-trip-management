@@ -93,6 +93,7 @@ const InterFace = () => {
             onClick={() => {
               setIsOpens(true);
             }}
+            color=""
           >
             اعاده تعيين البيانات
           </Button>
