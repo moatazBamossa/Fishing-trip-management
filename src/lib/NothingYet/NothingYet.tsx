@@ -1,10 +1,8 @@
 // NoOperations.js
 import { Button } from '@nextui-org/button';
-import React from 'react';
 
 const NothingYet = () => {
   const handleAddOperation = () => {
-    // Add operation logic here
     alert('Add operation clicked!');
   };
 
@@ -67,10 +65,5 @@ const NothingYet = () => {
     </div>
   );
 };
-
-// Add hover effect for the button
-// styles.buttonHover = {
-//   backgroundColor: '#0056b3'
-// };
 
 export default NothingYet;

@@ -1,6 +1,4 @@
 import './index.css';
-import TempName from './lib/First/TempName';
-import InterFace from './lib/InterFace/InterFace';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { NextUIProvider } from '@nextui-org/react';
