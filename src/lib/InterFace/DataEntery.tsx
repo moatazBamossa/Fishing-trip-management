@@ -113,7 +113,7 @@ const DataEntry = () => {
               }}
             >
               <Container
-                title="first"
+                title="اولا"
                 disabled={steps !== 0}
                 onSave={() => {
                   if (
@@ -132,9 +132,9 @@ const DataEntry = () => {
                     gap: 12
                   }}
                 >
-                  <TextField name="name_boat" placeholder="اسم القارب" />
+                  <TextField name="name_boat" placeholder="الاسم" />
                   <TextField name="typeFish" placeholder="نوع الصيد " />
-                  <TextField type="number" name="kilo" placeholder="كم كيلو " />
+                  <TextField type="number" name="kilo" placeholder=" الوزن" />
                   <TextField name="price_kilo" placeholder="سعر الكيلو " />
                 </div>
               </Container>
@@ -159,7 +159,7 @@ const DataEntry = () => {
                       <TextField
                         validate={required}
                         name={field.name}
-                        placeholder="اسم"
+                        placeholder="نوع السركاال"
                       />
                       <TextField
                         validate={required}
@@ -169,7 +169,11 @@ const DataEntry = () => {
                       />
                     </div>
                   ))}
-                  <Button variant="default" type="button" onClick={addField}>
+                  <Button
+                    variant="destructive"
+                    type="button"
+                    onClick={addField}
+                  >
                     Add New Boat
                   </Button>
                   <div
