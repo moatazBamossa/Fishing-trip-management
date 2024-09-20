@@ -1,7 +1,8 @@
 import DrawerDialogDemo from '@/components/DrawerComponent';
 
 import { Form } from 'react-final-form';
-import { Button } from '@/components/ui/button';
+// import { Button } from '@/components/ui/button';
+import { Button } from '@nextui-org/button';
 import Constants from '../Constants/Constants';
 import DataEntry from './DataEntery';
 import { useState } from 'react';
@@ -42,6 +43,8 @@ const InterFace = () => {
           if (isOpen()) setIsOpens(v);
         }}
         isOpen={isOpens}
+        title="المعلومات الاساسيه"
+        subTitle="هذه المعلومات ضروريه للحساب"
       >
         <Form
           onSubmit={onSubmit}
@@ -97,6 +100,7 @@ const InterFace = () => {
             اعاده تعيين البيانات
           </Button>
         </div>
+
         <DataEntry />
       </div>
     </>

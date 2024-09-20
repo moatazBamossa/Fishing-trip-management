@@ -8,7 +8,7 @@ const Constants = () => {
         validate={required}
         type="number"
         name="fisher"
-        placeholder="نسبه الصيادين"
+        placeholder="ضريبه الجمعيه"
       />
       <TextField
         validate={required}

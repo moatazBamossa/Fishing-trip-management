@@ -19,21 +19,21 @@ type DrawerDialogDemoProps = {
   isOpen: boolean;
   children: JSX.Element;
   onOpenChange: (v: boolean) => void;
+  title: string;
+  subTitle: string;
 };
 
 const DrawerDialogDemo: FC<DrawerDialogDemoProps> = (props) => {
-  const { isOpen, children } = props;
+  const { isOpen, children, title, subTitle } = props;
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   if (isDesktop) {
     return (
       <Dialog onOpenChange={props.onOpenChange} open={isOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] text-center">
           <DialogHeader>
-            <DialogTitle>Edit profile</DialogTitle>
-            <DialogDescription>
-              Make changes to your profile here. Click save when you're done.
-            </DialogDescription>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{subTitle}</DialogDescription>
           </DialogHeader>
           {children}
         </DialogContent>
@@ -45,10 +45,8 @@ const DrawerDialogDemo: FC<DrawerDialogDemoProps> = (props) => {
     <Drawer onOpenChange={props.onOpenChange} open={isOpen}>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Edit profile</DrawerTitle>
-          <DrawerDescription>
-            Make changes to your profile here. Click save when you're done.
-          </DrawerDescription>
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{subTitle}</DrawerDescription>
         </DrawerHeader>
         {children}
       </DrawerContent>
