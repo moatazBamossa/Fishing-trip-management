@@ -41,7 +41,6 @@ const Names = () => {
     openModal: false
   });
 
-  // const handelSearch = () => console.log('2', 2);
   const handelSearch = (value: string) => {
     const data = dataTemp.filter((item) => item.name.includes(value));
     setFilter((prev) => ({

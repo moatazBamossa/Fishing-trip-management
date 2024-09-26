@@ -40,7 +40,6 @@ const Steps = () => {
 
   const onSubmit = (values: any) => {
     //
-    console.log('values', values);
   };
 
   const isDesktop = useMediaQuery('(min-width: 850px)');
@@ -72,7 +71,6 @@ const Steps = () => {
             dateTrip: `${today.day}/ ${today.month}/ ${today.year}`
           }}
           render={({ handleSubmit, values, valid, dirty, form }) => {
-            console.log('val', values);
             return (
               <>
                 <Flex justifyCenter itemsCenter className="gap-4 w-full">
