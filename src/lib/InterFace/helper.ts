@@ -1,4 +1,5 @@
-export const required = (value: unknown) => (value ? undefined : 'required');
+export const required = (value: unknown) =>
+  value ? undefined : 'مطلوب تعبئته';
 
 export type Expense = {
   [key: string]: string;

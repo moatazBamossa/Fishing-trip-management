@@ -33,6 +33,7 @@ const dataTemp = [
     id: 22
   }
 ];
+
 const Names = () => {
   const [filter, setFilter] = useState({
     isSearch: false,
@@ -40,7 +41,6 @@ const Names = () => {
     openModal: false
   });
 
-  // const handelSearch = () => console.log('2', 2);
   const handelSearch = (value: string) => {
     const data = dataTemp.filter((item) => item.name.includes(value));
     setFilter((prev) => ({
@@ -92,7 +92,6 @@ const Names = () => {
               number={user.total}
               id={user.id}
               description={user.describe}
-              handelOpenNew={handelOpenNewUser}
             />
           ))}
         </div>

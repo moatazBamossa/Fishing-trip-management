@@ -15,13 +15,15 @@ interface IconProps {
   name: IconName; // IconName is provided by FontAwesome types
   size?: SizeProp;
   color?: string;
+  [x: string]: unknown;
 }
 
-const Icon: FC<IconProps> = ({ name, size, color }) => {
+const Icon: FC<IconProps> = ({ name, size, color, ...rest }) => {
   const iconLookup: IconLookup = { prefix: 'fas', iconName: name };
 
   return (
     <FontAwesomeIcon
+      {...rest}
       {...(color && { color: color })}
       {...(size && { size: size })}
       icon={iconLookup}

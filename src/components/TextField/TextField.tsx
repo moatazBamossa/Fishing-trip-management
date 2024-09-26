@@ -1,37 +1,40 @@
-import { FC, HTMLInputTypeAttribute } from 'react';
-import { Field, FieldRenderProps } from 'react-final-form';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import React from 'react';
+import { Field } from 'react-final-form';
+import TextField from '@mui/material/TextField';
 
-type TextFieldProps = {
+interface InputFieldProps {
   name: string;
-  label?: string;
+  validate?: (value: string) => string | undefined;
   placeholder?: string;
-  className?: string;
-  disabled?: boolean;
-  validate?: (_: unknown, values: unknown) => string | undefined;
-  parse?: <V, R>(value: V, name: string) => R;
-  type?: HTMLInputTypeAttribute;
-};
+  type?: string;
+  style?: React.CSSProperties; // For inline styles
+  className?: string; // For class-based styling
+}
 
-const TextField: FC<TextFieldProps> = (props): JSX.Element => {
-  const { name, label, validate, parse, type, ...rest } = props;
-  return (
-    <Field name={name} parse={parse} validate={validate}>
-      {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          {label && <Label htmlFor={name}>{label}</Label>}
-          <Input
-            style={{ textAlign: 'center' }}
-            id={name}
-            {...input}
-            type={type ?? 'text'}
-            {...rest}
-          />
-        </div>
-      )}
-    </Field>
-  );
-};
+const InputField: React.FC<InputFieldProps> = ({
+  name,
+  validate,
+  placeholder,
+  type = 'text',
+  style,
+  className
+}) => (
+  <Field name={name} validate={validate}>
+    {({ input, meta }) => (
+      <TextField
+        {...input}
+        hiddenLabel
+        type={type}
+        placeholder={placeholder}
+        variant="outlined"
+        error={meta.touched && meta.error ? true : false}
+        helperText={meta.touched && meta.error ? meta.error : ''}
+        fullWidth
+        style={style} // Apply inline styles
+        className={className} // Apply class-based styling
+      />
+    )}
+  </Field>
+);
 
-export default TextField;
+export default InputField;
