@@ -1,5 +1,4 @@
 import Flex from '@/components/Flex';
-import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
@@ -16,7 +15,14 @@ import { parseDate } from '@internationalized/date';
 
 const steps = ['تفاصيل الرحله', 'السركال', 'الاسهم', 'التفاصيل'];
 
-const stepsCalculating = {
+type StepComponentsT = {
+  0: () => JSX.Element;
+  1: () => JSX.Element;
+  2: () => JSX.Element;
+  3: () => JSX.Element;
+};
+
+const stepsCalculating: StepComponentsT = {
   0: StepOne,
   1: StepTow,
   2: StepThree,
@@ -25,21 +31,23 @@ const stepsCalculating = {
 
 export const today = parseDate(new Date().toISOString().split('T')[0]);
 const Steps = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState<keyof StepComponentsT>(0);
   const navigate = useNavigate();
 
   const StepComponent = stepsCalculating[activeStep];
 
   const handelChangeStep = (type: 'next' | 'prev'): void => {
-    if (type === 'next') {
-      setActiveStep((prev) => prev + 1);
-      return;
-    }
-    setActiveStep((prev) => prev - 1);
+    setActiveStep((prev) => {
+      const nextStep = type === 'next' ? prev + 1 : prev - 1;
+
+      // Ensure the result is within bounds and return it as a valid key
+      return Math.max(0, Math.min(nextStep, 3)) as keyof StepComponentsT;
+    });
   };
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: unknown) => {
     //
+    console.log('values', values);
   };
 
   const isDesktop = useMediaQuery('(min-width: 850px)');
@@ -70,7 +78,7 @@ const Steps = () => {
           initialValues={{
             dateTrip: `${today.day}/ ${today.month}/ ${today.year}`
           }}
-          render={({ handleSubmit, values, valid, dirty, form }) => {
+          render={({ valid }) => {
             return (
               <>
                 <Flex justifyCenter itemsCenter className="gap-4 w-full">

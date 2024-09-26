@@ -5,6 +5,7 @@ import { CalculationResultType } from './helper';
 import Flex from '@/components/Flex';
 import { Button } from '@nextui-org/button';
 import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
 
 const Details: FC<{ totalCalculatedData?: CalculationResultType | null }> = (
   props
@@ -15,7 +16,6 @@ const Details: FC<{ totalCalculatedData?: CalculationResultType | null }> = (
   const downloadPDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
-    const pageHeight = doc.internal.pageSize.getHeight();
 
     // Add logo (Base64 or URL)
     const logoUrl =
@@ -33,20 +33,73 @@ const Details: FC<{ totalCalculatedData?: CalculationResultType | null }> = (
 
     // Add report data in the center with lines
     let y = 50; // Starting y position after the header
-    Object.entries(data).forEach(([name, value]) => {
+    Object.entries(data ?? []).forEach(([name, value]) => {
       doc.setFontSize(14);
-      // Center the text horizontally
-      doc.text(`${name}: ${value}`, pageWidth / 2, y, { align: 'center' });
+
+      // Check if value is an array (e.g., expenses)
+      if (Array.isArray(value)) {
+        // Handle array value (e.g., expenses)
+        value.forEach((expense, index) => {
+          if (typeof expense === 'object' && expense !== null) {
+            const expenseStr = `Expense ${index + 1}: ${expense.name} - ${
+              expense.amount
+            }`;
+            doc.text(expenseStr, pageWidth / 2, y, { align: 'center' });
+            y += 15; // Move down after each expense
+          }
+        });
+      } else {
+        // Handle simple string or number values
+        doc.text(`${name}: ${value}`, pageWidth / 2, y, { align: 'center' });
+        y += 15; // Move down for the next entry
+      }
 
       // Draw a line under each entry
-      doc.line(10, y + 5, pageWidth - 10, y + 5); // Horizontal line from x=10 to the right side
-
-      y += 15; // Move down for the next entry
+      doc.line(10, y + 5, pageWidth - 10, y + 5); // Horizontal line
+      y += 15; // Move down further for the next entry
     });
 
     // Save the generated PDF
     doc.save('styled_report.pdf');
   };
+
+  const downloadExcel = () => {
+    // Create the worksheet data from the object
+    const worksheetData = [
+      {
+        Name: data?.name,
+        'Total Price': data?.totalPrice,
+        'Total Price/Kilo': data?.totalPriceKilo,
+        'Fisher Rate': data?.fisherRate,
+        'Total Expenses': data?.totalExpenses,
+        'Boat Rate': data?.boatRate,
+        'Representative Rate': data?.representativeRate,
+        'All Shared': data?.allShared,
+        Shared: data?.shared,
+        'Real Boat Rate': data?.realBoatRate,
+        'Owner Boat Rate': data?.ownerBoatRate,
+        'Total Owner Rate': data?.totalOwnerRate,
+        'All Fisher Rate': data?.allFisherRate,
+        'Other Rate': data?.otherRate,
+        Kilo: data?.kilo,
+        'Price per Kilo': data?.priceKilo,
+        Expenses: data?.expenses
+          .map((expense) => `${expense.name}: ${expense.amount}`)
+          .join(', ') // Convert expenses to a single string
+      }
+    ];
+
+    // Create a new workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.json_to_sheet(worksheetData);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Calculation Report');
+
+    // Trigger download
+    XLSX.writeFile(workbook, 'calculation_report.xlsx');
+  };
+
   if (!data) return null;
   return (
     <>
@@ -138,6 +191,7 @@ const Details: FC<{ totalCalculatedData?: CalculationResultType | null }> = (
         <Flex>
           <Button>save</Button>
           <Button onClick={downloadPDF}>save and download as PDF</Button>
+          <Button onClick={downloadExcel}>save and download as EXCEL</Button>
         </Flex>
       </div>
     </>
