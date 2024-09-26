@@ -9,7 +9,6 @@ type ContainerProps = {
   description?: string;
   number: number;
   id: number;
-  handelOpenNew: () => void;
 };
 
 const Container: FC<ContainerProps> = (props) => {
@@ -17,7 +16,7 @@ const Container: FC<ContainerProps> = (props) => {
   const { title, description, number, id } = props;
   const handelOpenOperations = () => {
     if (number) return navigate(`/operations/${id}`);
-    props.handelOpenNew();
+    navigate(`/steps/${id}`);
   };
   return (
     <Flex

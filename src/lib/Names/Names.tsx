@@ -33,6 +33,7 @@ const dataTemp = [
     id: 22
   }
 ];
+
 const Names = () => {
   const [filter, setFilter] = useState({
     isSearch: false,
@@ -92,7 +93,6 @@ const Names = () => {
               number={user.total}
               id={user.id}
               description={user.describe}
-              handelOpenNew={handelOpenNewUser}
             />
           ))}
         </div>

@@ -16,30 +16,30 @@ const Details: FC<{ totalCalculatedData?: CalculationResultType | null }> = (
         style={{
           width: 400,
           padding: 20,
-          borderRadius: 10,
-          boxShadow: ' 0 4px 6px rgba(0, 0, 0, 0.1)',
-          backgroundColor: '#fff'
+          borderRadius: 10
+          // boxShadow: ' 0 4px 6px rgba(0, 0, 0, 0.1)',
+          // backgroundColor: '#fff'
         }}
       >
-        <h1>Show Details</h1>
+        <h1>التفاصيل</h1>
         <div className={style.detail}>
-          <strong>Name:</strong> {data.name}
+          <strong>رقم الرحلة</strong> {data.name}
         </div>
         <div className={style.detail}>
-          <strong>Kilo:</strong> {data.kilo}
+          <strong>الوزن الصافي:</strong> {data.kilo}
         </div>
         <div className={style.detail}>
-          <strong>Price per Kilo:</strong> {data.priceKilo}
+          <strong>سعر الكيلو:</strong> {data.priceKilo}
         </div>
 
         <div className={style.detail}>
-          <strong>total Price:</strong> {data.totalPriceKilo}
+          <strong>اجمالي المبلغ الكلي:</strong> {data.totalPriceKilo}
         </div>
         <div className={style.detail}>
-          <strong>fisher Rate:</strong> {data.fisherRate}
+          <strong>ضريبة الجمعية:</strong> {data.fisherRate}
         </div>
         <div className={style.detail}>
-          <strong>expenses</strong>
+          <strong>السركال</strong>
           <ul>
             {/* {data.expenses?.map((expense) => <li>{expense}</li>)} */}
             {data?.expenses?.map((expense, index) => {
@@ -53,48 +53,48 @@ const Details: FC<{ totalCalculatedData?: CalculationResultType | null }> = (
               );
             })}
           </ul>
-          <strong>total expenses:</strong> {data.totalExpenses}
+          <strong>المبلغ الاجمالي للسركال:</strong> {data.totalExpenses}
         </div>
         <div className={style.detail}>
-          <strong>boat Rate:</strong> {data.boatRate}
+          <strong>نسبة العبري:</strong> {data.boatRate}
         </div>
         <div className={style.detail}>
-          <strong>Real boat Rate:</strong> {data.realBoatRate}
+          <strong>اجمالي نسبة العبري:</strong> {data.realBoatRate}
         </div>
         <div className={style.detail}>
-          <strong>owner boat Rate:</strong> {data.ownerBoatRate}
+          <strong>حصة المالك من العبري:</strong> {data.ownerBoatRate}
         </div>
         <div className={style.detail}>
-          <strong>representative Rate:</strong> {data.representativeRate}
+          <strong>حصة الوكيل:</strong> {data.representativeRate}
         </div>
         <div className={style.detail}>
-          <strong>Owner Shared:</strong> {values.owner_shared}
+          <strong>مجموع الاسهم :</strong> {data.allShared}
         </div>
         <div className={style.detail}>
-          <strong>Fisher Shared:</strong> {values.fisher_shared}
+          <strong>قيمة السهم الواحد :</strong> {data.shared}
+        </div>
+        <div className={style.detail}>
+          <strong>اسهم المالك:</strong> {values.owner_shared}
+        </div>
+        <div className={style.detail}>
+          <strong>اسهم البحارة:</strong> {values.fisher_shared}
         </div>
         {values?.other_shared && (
           <div className={style.detail}>
-            <strong>other Shared:</strong>
+            <strong>اسهم اخرى:</strong>
             {values.other_shared}
           </div>
         )}
-        <div className={style.detail}>
-          <strong>all Shared:</strong> {data.allShared}
-        </div>
-        <div className={style.detail}>
-          <strong>one Shared:</strong> {data.shared}
-        </div>
-        <div className={style.detail}>
-          <strong>total owner Shared:</strong> {data.totalOwnerRate}
-        </div>
-        <div className={style.detail}>
-          <strong>total fisher Shared:</strong> {data.allFisherRate}
-        </div>
 
+        <div className={style.detail}>
+          <strong>المبلغ الاجمالي للبحارة:</strong> {data.allFisherRate}
+        </div>
+        <div className={style.detail}>
+          <strong>المبلغ الاجمالي للمالك:</strong> {data.totalOwnerRate}
+        </div>
         {values?.other_shared && (
           <div className={style.detail}>
-            <strong>Other Shared:</strong> {data?.otherRate}
+            <strong>اجمالي اخرى:</strong> {data?.otherRate}
           </div>
         )}
       </div>

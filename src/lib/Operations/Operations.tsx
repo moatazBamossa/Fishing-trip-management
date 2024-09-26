@@ -1,7 +1,7 @@
 import Header from '../Header/Header';
 import { useState } from 'react';
 import ReportContainer from '../ReportContainer/ReportContainer';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import NothingYet from '../NothingYet/NothingYet';
 
 const dataTemp = [
@@ -29,6 +29,7 @@ const dataTemp = [
 
 const Operations = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState({
     isSearch: false,
@@ -63,7 +64,7 @@ const Operations = () => {
         handelClickSearch={handelClickSearch}
         primaryButton={{
           label: 'اضافه عمليه جديده',
-          onClick: () => console.log('22', 22)
+          onClick: () => navigate(`/steps/${id}`)
         }}
         isBack
       />
