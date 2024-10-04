@@ -188,10 +188,14 @@ const Details: FC<{ totalCalculatedData?: CalculationResultType | null }> = (
             <strong>اجمالي اخرى:</strong> {data?.otherRate}
           </div>
         )}
-        <Flex>
-          <Button>save</Button>
-          <Button onClick={downloadPDF}>save and download as PDF</Button>
-          <Button onClick={downloadExcel}>save and download as EXCEL</Button>
+        <Flex justifyCenter itemsCenter className="gap-3">
+          <Button style={{ padding: 24 }}>حفط</Button>
+          <Button style={{ padding: 24 }} onClick={downloadPDF}>
+            التحميل ع شكل PDF
+          </Button>
+          <Button style={{ padding: 24 }} onClick={downloadExcel}>
+            التحميل ع شكل EXCEL
+          </Button>
         </Flex>
       </div>
     </>

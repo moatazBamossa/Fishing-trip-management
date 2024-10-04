@@ -6,6 +6,7 @@ import NextModal from '../NextModal';
 import { Input } from '@nextui-org/react';
 import Flex from '@/components/Flex';
 import Icon from '@/components/FontAwesomeIcon';
+import Taxes from '../Taxes';
 
 const dataTemp = [
   {
@@ -38,7 +39,7 @@ const Names = () => {
   const [filter, setFilter] = useState({
     isSearch: false,
     searching: dataTemp,
-    openModal: false
+    openUserModal: false
   });
 
   const handelSearch = (value: string) => {
@@ -58,7 +59,7 @@ const Names = () => {
   const handelOpenNewUser = () => {
     setFilter((prev) => ({
       ...prev,
-      openModal: !prev.openModal
+      openUserModal: !prev.openUserModal
     }));
   };
 
@@ -77,6 +78,7 @@ const Names = () => {
           onClick: handelOpenNewUser
         }}
       />
+
       {filter.searching.length ? (
         <div
           style={{
@@ -86,13 +88,16 @@ const Names = () => {
             gridTemplateColumns: 'repeat(auto-fill,minmax(332px,1fr))'
           }}
         >
-          {filter.searching.map((user) => (
-            <Container
-              title={user.name}
-              number={user.total}
-              id={user.id}
-              description={user.describe}
-            />
+          {filter.searching.map((user, i) => (
+            <>
+              <Container
+                key={i}
+                title={user.name}
+                number={user.total}
+                id={user.id}
+                description={user.describe}
+              />
+            </>
           ))}
         </div>
       ) : (
@@ -101,7 +106,7 @@ const Names = () => {
       <NextModal
         title="اضافه مستخدم"
         handelOpenChange={handelOpenNewUser}
-        isOpen={filter.openModal}
+        isOpen={filter.openUserModal}
       >
         <Flex flexCol className="gap-2">
           <Input
@@ -122,6 +127,7 @@ const Names = () => {
           />
         </Flex>
       </NextModal>
+      <Taxes />
     </div>
   );
 };

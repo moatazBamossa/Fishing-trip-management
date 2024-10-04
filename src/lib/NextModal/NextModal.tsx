@@ -10,13 +10,15 @@ import { FC } from 'react';
 
 type NextModalProps = {
   isOpen: boolean;
+  disabled?: boolean;
   handelOpenChange: () => void;
   children?: JSX.Element;
   title: string;
+  onClick?: () => void;
 };
 
 const NextModal: FC<NextModalProps> = (props) => {
-  const { isOpen, children, title } = props;
+  const { isOpen, children, title, disabled } = props;
 
   return (
     <Modal
@@ -34,7 +36,11 @@ const NextModal: FC<NextModalProps> = (props) => {
               <Button color="danger" variant="light" onPress={onClose}>
                 اغلاق
               </Button>
-              <Button color="primary" onPress={onClose}>
+              <Button
+                isDisabled={disabled}
+                color="primary"
+                onPress={props.onClick || onClose}
+              >
                 اضافه
               </Button>
             </ModalFooter>

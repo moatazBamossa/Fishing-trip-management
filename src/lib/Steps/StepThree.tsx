@@ -14,17 +14,17 @@ const StepThree = () => {
     >
       <TextField
         validate={required}
-        name="owner_shared"
+        name="owner_arrow"
         placeholder="اسهم المالك"
         type="number"
       />
       <TextField
         validate={required}
-        name="fisher_shared"
+        name="fisher_arrow"
         placeholder="اسهم البحره"
         type="number"
       />
-      <TextField name="other_shared" placeholder="اخر " type="number" />
+      <TextField name="other_arrow" placeholder="اخر " type="number" />
     </div>
   );
 };

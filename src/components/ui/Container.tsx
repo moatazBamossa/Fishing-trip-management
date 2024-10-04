@@ -14,10 +14,7 @@ type ContainerProps = {
 const Container: FC<ContainerProps> = (props) => {
   const navigate = useNavigate();
   const { title, description, number, id } = props;
-  const handelOpenOperations = () => {
-    if (number) return navigate(`/operations/${id}`);
-    navigate(`/steps/${id}`);
-  };
+
   return (
     <Flex
       flexCol
@@ -55,14 +52,24 @@ const Container: FC<ContainerProps> = (props) => {
 
       <Flex justifyBetween itemsCenter>
         <p>هناك {number} عمليه</p>
+        {!!number && (
+          <Button
+            onClick={() => navigate(`/operations/${id}`)}
+            size="md"
+            color="primary"
+          >
+            عرض
+            <Icon name="eye" />
+          </Button>
+        )}
         <Button
-          onClick={handelOpenOperations}
+          onClick={() => navigate(`/steps/${id}`)}
           size="md"
-          {...(number && { variant: 'bordered' })}
+          variant="bordered"
           color="primary"
         >
-          {number ? 'عرض' : 'اضافه'}
-          <Icon name={number ? 'eye' : 'plus'} />
+          اضافه
+          <Icon name="plus" />
         </Button>
       </Flex>
     </Flex>

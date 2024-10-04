@@ -1,56 +1,112 @@
 import Flex from '@/components/Flex';
-import Stepper from '@mui/material/Stepper';
-import Step from '@mui/material/Step';
-import StepLabel from '@mui/material/StepLabel';
-import { useState } from 'react';
+// import Stepper from '@mui/material/Stepper';
+// import Step from '@mui/material/Step';
+// import StepLabel from '@mui/material/StepLabel';
+// import { useState } from 'react';
 import { Button } from '@nextui-org/button';
-import StepOne from './StepOne';
-import { Form } from 'react-final-form';
-import StepTow from './StepTwo';
-import StepThree from './StepThree';
-import { useMediaQuery } from '@mui/material';
-import SuccessMessage from './SuccessMessage';
+// import StepOne from './StepOne';
+// import { Form } from 'react-final-form';
+// import arrayMutators from 'final-form-arrays';
+// import StepTow from './StepTwo';
+// import StepThree from './StepThree';
+// import { useMediaQuery } from '@mui/material';
+// import SuccessMessage from './SuccessMessage';
 import { useNavigate } from 'react-router';
 import { parseDate } from '@internationalized/date';
+// import { Expense, ValuesType } from '../InterFace/helper';
+// import { ConstData } from '../InterFace/InterFace';
+// import { useCalculationStore } from '../storge/createCalcuateSlice';
+import StepsForm from './StepsForm';
 
-const steps = ['تفاصيل الرحله', 'السركال', 'الاسهم', 'التفاصيل'];
+// const steps = ['تفاصيل الرحله', 'السركال', 'الاسهم', 'التفاصيل'];
 
-type StepComponentsT = {
-  0: () => JSX.Element;
-  1: () => JSX.Element;
-  2: () => JSX.Element;
-  3: () => JSX.Element;
-};
+// type StepComponentsT = {
+//   0: () => JSX.Element;
+//   1: () => JSX.Element;
+//   2: () => JSX.Element;
+//   3: () => JSX.Element;
+// };
 
-const stepsCalculating: StepComponentsT = {
-  0: StepOne,
-  1: StepTow,
-  2: StepThree,
-  3: SuccessMessage
-};
+// const stepsCalculating: StepComponentsT = {
+//   0: StepOne,
+//   1: StepTow,
+//   2: StepThree,
+//   3: SuccessMessage
+// };
 
 export const today = parseDate(new Date().toISOString().split('T')[0]);
+
+// const retrievedData = localStorage?.getItem('taxesData');
+// const constData: ConstData = retrievedData && JSON.parse(retrievedData);
+
 const Steps = () => {
-  const [activeStep, setActiveStep] = useState<keyof StepComponentsT>(0);
   const navigate = useNavigate();
+  // const [activeStep, setActiveStep] = useState<keyof StepComponentsT>(0);
+  // const { setCalculatedData } = useCalculationStore();
 
-  const StepComponent = stepsCalculating[activeStep];
+  // const onSubmit = (values: ValuesType | Record<string, string>) => {
+  //   console.log('values', values);
 
-  const handelChangeStep = (type: 'next' | 'prev'): void => {
-    setActiveStep((prev) => {
-      const nextStep = type === 'next' ? prev + 1 : prev - 1;
+  //   let totalPrice = +values?.kilo * +values?.price_kilo; // !value changes
 
-      // Ensure the result is within bounds and return it as a valid key
-      return Math.max(0, Math.min(nextStep, 3)) as keyof StepComponentsT;
-    });
-  };
+  //   const totalPriceKilo = +values?.kilo * +values?.price_kilo; // ! the total of kilo * price
 
-  const onSubmit = (values: unknown) => {
-    //
-    console.log('values', values);
-  };
+  //   const fisherRate = totalPrice * (constData.fisher / 100); // ! fisher Rate
+  //   totalPrice -= fisherRate; // ? change the total
 
-  const isDesktop = useMediaQuery('(min-width: 850px)');
+  //   const totalExpenses = Array.isArray(values.expenses)
+  //     ? values.expenses.reduce((total, item) => {
+  //         const value = Object.values(item)[0]; // Extract the value
+  //         return total + Number(value); // Add the numeric value to the total
+  //       }, 0)
+  //     : 0; // ! total of all Expenses
+
+  //   totalPrice -= totalExpenses; // ? change the total
+
+  //   const boatRate = totalPrice * (constData.boat / 100); // ! boat Rate
+  //   totalPrice -= boatRate; // ? change the total
+
+  //   const representativeRate = totalPrice * (constData.representative / 100); // ! representative Rate
+  //   totalPrice -= representativeRate; // ? change the total
+
+  //   const allShared =
+  //     +values.owner_shared +
+  //     +values.fisher_shared +
+  //     +(values?.other_shared ?? 0); // ! all Shared
+  //   const shared = totalPrice / allShared; // ! one Shared
+
+  //   const realBoatRate = boatRate - shared / 2;
+
+  //   const ownerBoatRate = boatRate - realBoatRate;
+
+  //   const totalOwnerRate = +values.owner_shared * shared + ownerBoatRate; // ! total owner Shared
+
+  //   const allFisherRate = +values.fisher_shared * shared; // ! total fisher Shared
+  //   const otherRate = +(values?.other_shared ?? 0) * shared; // ! total other Shared
+
+  //   const calculatedData = {
+  //     totalPrice,
+  //     totalPriceKilo,
+  //     fisherRate,
+  //     totalExpenses,
+  //     boatRate,
+  //     representativeRate,
+  //     allShared,
+  //     shared,
+  //     realBoatRate,
+  //     ownerBoatRate,
+  //     totalOwnerRate,
+  //     allFisherRate,
+  //     otherRate,
+  //     name: values.name_boat,
+  //     kilo: +values.kilo,
+  //     priceKilo: +values.price_kilo,
+  //     expenses: values.expenses as Expense[]
+  //   };
+
+  //   setCalculatedData(calculatedData);
+  // };
+
   return (
     <Flex
       flexCol
@@ -73,85 +129,7 @@ const Steps = () => {
       >
         <p>جديد</p>
         <p>يمكنك حساب جديد</p>
-        <Form
-          onSubmit={onSubmit}
-          initialValues={{
-            dateTrip: `${today.day}/ ${today.month}/ ${today.year}`
-          }}
-          render={({ valid }) => {
-            return (
-              <>
-                <Flex justifyCenter itemsCenter className="gap-4 w-full">
-                  {isDesktop && (
-                    <Flex
-                      style={{
-                        padding: 40,
-                        borderRadius: 31.229,
-                        boxShadow: '8px 8px 24px 0px rgba(2, 2, 70, 0.05)'
-                      }}
-                    >
-                      <Stepper activeStep={activeStep} orientation="vertical">
-                        {steps.map((label) => (
-                          <Step key={label}>
-                            <StepLabel>{label}</StepLabel>
-                          </Step>
-                        ))}
-                      </Stepper>
-                    </Flex>
-                  )}
-                  <Flex
-                    style={{
-                      padding: 20
-                    }}
-                    flexCol
-                    className="gap-2"
-                  >
-                    {!isDesktop && (
-                      <Stepper activeStep={activeStep}>
-                        {steps.map((label) => (
-                          <Step key={label}>
-                            <StepLabel>{label}</StepLabel>
-                          </Step>
-                        ))}
-                      </Stepper>
-                    )}
-                    <Flex
-                      style={{
-                        padding: 32,
-                        boxShadow: '8px 8px 24px 0px rgba(2, 2, 70, 0.05)',
-                        borderRadius: 31.229
-                      }}
-                    >
-                      <StepComponent />
-                    </Flex>
-                  </Flex>
-                </Flex>
-                <Flex className="gap-2">
-                  <Button
-                    onClick={() => {
-                      handelChangeStep('next');
-                    }}
-                    isDisabled={activeStep === steps.length || !valid}
-                    variant="shadow"
-                    color="primary"
-                  >
-                    {activeStep === steps.length - 1 ? 'حفظ' : 'التالي'}
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      handelChangeStep('prev');
-                    }}
-                    isDisabled={activeStep <= 0}
-                    variant="shadow"
-                    color="primary"
-                  >
-                    السابق
-                  </Button>
-                </Flex>
-              </>
-            );
-          }}
-        />
+        <StepsForm />
       </Flex>
       <Button color="warning" variant="shadow" onClick={() => navigate(-1)}>
         الرجوع الى القائمه الرئيسية

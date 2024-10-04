@@ -4,6 +4,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { Button, Input, User } from '@nextui-org/react';
 import { FC } from 'react';
 import { useNavigate } from 'react-router';
+import { useCalculationStore } from '../storge/createCalcuateSlice';
+import Taxes from '../Taxes';
 
 type HeaderProps = {
   isSearch: boolean;
@@ -18,7 +20,7 @@ type HeaderProps = {
 const Header: FC<HeaderProps> = (props) => {
   const { isSearch, primaryButton, isBack } = props;
   const navigate = useNavigate();
-
+  const { setOpenNextDrawer } = useCalculationStore();
   const isDesktop = useMediaQuery('(min-width: 850px)');
 
   return (
@@ -68,6 +70,9 @@ const Header: FC<HeaderProps> = (props) => {
             <Button onClick={primaryButton.onClick} size="sm">
               {primaryButton.label}
             </Button>
+            <Button onClick={() => setOpenNextDrawer('taxes')} size="sm">
+              اعاده تعيين ارقام الضرائب
+            </Button>
             {!isDesktop && (
               <Button
                 onClick={props.handelClickSearch}
@@ -94,6 +99,7 @@ const Header: FC<HeaderProps> = (props) => {
           />
         </Flex>
       )}
+      <Taxes />
     </Flex>
   );
 };
