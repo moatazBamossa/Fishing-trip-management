@@ -12,7 +12,7 @@ import ProtectedRoute from './ProtectedRoute';
 const queryClient = new QueryClient();
 
 const App = () => {
-  // const { data: isAuthenticated, isLoading, error } = useGetAuth();
+  const isAuthenticated = localStorage?.getItem('token');
 
   return (
     <NextUIProvider
@@ -30,7 +30,7 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedRoute isAuthenticated={true}>
+              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
                 <Names />
               </ProtectedRoute>
             }
@@ -38,7 +38,7 @@ const App = () => {
           <Route
             path="/steps/:id"
             element={
-              <ProtectedRoute isAuthenticated={true}>
+              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
                 <Steps />
               </ProtectedRoute>
             }
@@ -46,7 +46,7 @@ const App = () => {
           <Route
             path="/operations/:id"
             element={
-              <ProtectedRoute isAuthenticated={true}>
+              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
                 <Operations />
               </ProtectedRoute>
             }
