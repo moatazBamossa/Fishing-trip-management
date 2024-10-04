@@ -1,25 +1,26 @@
-import { useState } from 'react';
 import TextField from '@/components/TextField';
 import { required } from '../InterFace/helper';
 import { Button } from '@nextui-org/button';
 import { Field, useForm, useFormState } from 'react-final-form';
 import { Checkbox } from '@nextui-org/react';
+import { FieldArray } from 'react-final-form-arrays';
+import Icon from '@/components/FontAwesomeIcon';
+import Flex from '@/components/Flex';
 
 const StepTow = () => {
-  const { change } = useForm();
+  const { change, mutators } = useForm();
   const { values, valid } = useFormState();
 
-  const [fields, setFields] = useState([{ name: 'bay_0', value: 'value_0' }]);
+  const expensesActions = values?.expenses?.length ?? 0;
 
-  const addField = () => {
-    setFields([
-      ...fields,
-      { name: `bay_${fields.length}`, value: `value_${fields.length}` }
-    ]);
+  const addComponent = (): void => {
+    mutators.push('expenses', {
+      occurrence: expensesActions + 1
+    });
   };
 
-  const removeLastField = () => {
-    setFields(fields.slice(0, -1)); // Removes the last element from the array
+  const removeComponent = (stepIndex: number): void => {
+    mutators.remove('expenses', stepIndex);
   };
 
   return (
@@ -32,29 +33,46 @@ const StepTow = () => {
         width: '100%'
       }}
     >
-      {fields.map((field, index) => (
-        <div key={index} style={{ display: 'flex', gap: 12 }}>
-          <TextField
-            validate={required}
-            name={field.name}
-            placeholder="المشتريات"
-          />
-          <TextField
-            validate={required}
-            name={field.value}
-            placeholder="القيمه"
-            type="number"
-          />
-        </div>
-      ))}
-      <Button
-        color="default"
-        variant="shadow"
-        isDisabled={fields.length <= 1 && !valid}
-        type="button"
-        onClick={valid ? addField : removeLastField}
-      >
-        {valid ? ' مشتريات اخرى' : ' حذف'}
+      <FieldArray name="expenses">
+        {({ fields }): JSX.Element => {
+          const data = fields.value;
+
+          return (
+            <>
+              {data?.map((_, index) => {
+                return (
+                  <Flex justifyCenter itemsCenter className="gap-2">
+                    <TextField
+                      validate={required}
+                      name={`expenses.${index}.bay`}
+                      placeholder="المشتريات"
+                    />
+                    <TextField
+                      validate={required}
+                      name={`expenses.${index}.value`}
+                      placeholder="القيمه"
+                      type="number"
+                    />
+
+                    {fields.value.length - 1 === index &&
+                      fields.value.length > 1 && (
+                        <Icon
+                          name="trash"
+                          className="cursor-pointer"
+                          onClick={() => removeComponent(index)}
+                          color="red"
+                        />
+                      )}
+                  </Flex>
+                );
+              })}
+            </>
+          );
+        }}
+      </FieldArray>
+
+      <Button isDisabled={!valid} onClick={addComponent}>
+        اضافه
       </Button>
       <div
         style={{

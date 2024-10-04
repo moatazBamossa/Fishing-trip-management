@@ -6,22 +6,22 @@ import NothingYet from '../NothingYet/NothingYet';
 
 const dataTemp = [
   {
-    title: 'معتز باموسى',
+    title: ' رحله رقم ١',
     date: '18/8/2021',
     nameId: 1
   },
   {
-    title: 'عمر باشراحيل',
+    title: ' رحله رقم ٢',
     date: '18/8/2021',
     nameId: 1
   },
   {
-    title: 'سالم الهندي',
+    title: ' رحله رقم ٣',
     date: '18/8/2021',
     nameId: 2
   },
   {
-    title: 'علي بن محمد ',
+    title: ' رحله رقم ٤',
     date: '18/8/2021',
     nameId: 2
   }
@@ -77,9 +77,9 @@ const Operations = () => {
         }}
       >
         {search.searching.length ? (
-          search.searching?.map((operation) => {
+          search.searching?.map((operation, i) => {
             if (operation.nameId === +id)
-              return <ReportContainer {...operation} />;
+              return <ReportContainer {...operation} key={i} />;
           })
         ) : (
           <NothingYet />
