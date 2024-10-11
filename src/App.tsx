@@ -7,6 +7,7 @@ import Operations from './lib/Operations/Operations';
 import Steps from './lib/Steps/Steps';
 import Login from './lib/Login';
 import ProtectedRoute from './ProtectedRoute';
+import Details from './lib/Details';
 
 // Create a client outside of the App component
 const queryClient = new QueryClient();
@@ -32,6 +33,14 @@ const App = () => {
             element={
               <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
                 <Names />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/details"
+            element={
+              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
+                <Details />
               </ProtectedRoute>
             }
           />

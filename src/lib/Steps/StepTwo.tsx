@@ -1,14 +1,14 @@
 import TextField from '@/components/TextField';
 import { required } from '../InterFace/helper';
 import { Button } from '@nextui-org/button';
-import { Field, useForm, useFormState } from 'react-final-form';
-import { Checkbox } from '@nextui-org/react';
+import { useForm, useFormState } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
 import Icon from '@/components/FontAwesomeIcon';
 import Flex from '@/components/Flex';
+import CheckboxField from '@/components/CheckboxField';
 
 const StepTow = () => {
-  const { change, mutators } = useForm();
+  const { mutators } = useForm();
   const { values, valid } = useFormState();
 
   const expensesActions = values?.expenses?.length ?? 0;
@@ -74,38 +74,13 @@ const StepTow = () => {
       <Button isDisabled={!valid} onClick={addComponent}>
         اضافه
       </Button>
-      <div
-        style={{
-          display: 'flex',
-          gap: 8,
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <label
-          htmlFor="terms"
-          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-        >
-          هل القارب ايجار ؟
-        </label>
 
-        <Field name="isBoatRate">
-          {(): JSX.Element => (
-            <Checkbox
-              isSelected={values.isBoatRate}
-              id="terms"
-              onChange={(isCheck) => {
-                change('isBoatRate', isCheck.target.checked);
-              }}
-            />
-          )}
-        </Field>
-      </div>
-      {values?.isBoatRate && (
+      <CheckboxField label="هل القارب ايجار ؟" name="is_boat_rate" />
+      {values?.is_boat_rate && (
         <TextField
           validate={required}
           placeholder="مبلغ ايجار القارب"
-          name="RateBoatPrice"
+          name="rate_boat_price"
         />
       )}
     </div>
