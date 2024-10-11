@@ -1,5 +1,5 @@
 import Container from '@/components/ui/Container';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from '../Header/Header';
 import NothingYet from '../NothingYet/NothingYet';
 import NextModal from '../NextModal';
@@ -7,6 +7,7 @@ import { Input } from '@nextui-org/react';
 import Flex from '@/components/Flex';
 import Icon from '@/components/FontAwesomeIcon';
 import Taxes from '../Taxes';
+import { useCalculationStore } from '../storge/createCalcuateSlice';
 
 const dataTemp = [
   {
@@ -35,12 +36,15 @@ const dataTemp = [
   }
 ];
 
+const retrievedData = localStorage?.getItem('taxesData');
+
 const Names = () => {
   const [filter, setFilter] = useState({
     isSearch: false,
     searching: dataTemp,
     openUserModal: false
   });
+  const { setOpenNextDrawer } = useCalculationStore();
 
   const handelSearch = (value: string) => {
     const data = dataTemp.filter((item) => item.name.includes(value));
@@ -62,6 +66,22 @@ const Names = () => {
       openUserModal: !prev.openUserModal
     }));
   };
+
+  const isOpen = () => {
+    if (retrievedData) {
+      const check = JSON.parse(retrievedData);
+      const keysToCheck = ['tax_association', 'tax_boat', 'tax_agent'];
+
+      return keysToCheck.every((key) =>
+        Object.prototype.hasOwnProperty.call(check, key)
+      );
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    !isOpen() && setOpenNextDrawer('taxes');
+  }, []);
 
   return (
     <div
