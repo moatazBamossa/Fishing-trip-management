@@ -15,20 +15,6 @@ export type TaxesType = {
 const retrievedData = localStorage?.getItem('taxesData');
 const taxes: TaxesType = retrievedData && JSON.parse(retrievedData);
 
-const isOpen = () => {
-  if (retrievedData) {
-    const check = JSON.parse(retrievedData);
-
-    const keysToCheck = ['tax_association', 'tax_boat', 'tax_agent'];
-
-    return keysToCheck.every((key) =>
-      Object.prototype.hasOwnProperty.call(check, key)
-    );
-  }
-
-  return false;
-};
-
 const Taxes: FC = () => {
   const { openNextDrawer, setOpenNextDrawer } = useCalculationStore();
   const [formData, setFormData] = useState<TaxesType>({
@@ -39,7 +25,8 @@ const Taxes: FC = () => {
 
   const onSubmit = (values: TaxesType) => {
     localStorage.setItem('taxesData', JSON.stringify(values));
-    window.location.reload();
+
+    setOpenNextDrawer(null); // Close the modal only if the condition is met
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +38,7 @@ const Taxes: FC = () => {
 
   return (
     <NextModal
-      isOpen={openNextDrawer === 'taxes' || !isOpen()}
+      isOpen={openNextDrawer === 'taxes'}
       handelOpenChange={() => setOpenNextDrawer(null)}
       title={'الضرائب'}
       onClick={() => onSubmit(formData)}
