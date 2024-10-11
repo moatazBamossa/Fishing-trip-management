@@ -4,9 +4,15 @@ import {
   UseMutationResult
 } from '@tanstack/react-query';
 
-import { GetTokenStatusT, HTTPValidationError, TokenResponse } from './types'; // Adjust the import based on your types
+import {
+  GetTokenStatusT,
+  HTTPValidationError,
+  LoginT,
+  TokenResponse
+} from './types'; // Adjust the import based on your types
 import axios from 'axios';
 import { Toastr } from '@/components/Toastr/Toastr';
+
 // export const getAuthStatus = async (): Promise<boolean> => {
 //   const response = await axios({
 //     method: 'get',
@@ -43,6 +49,15 @@ export const getTokenStatus = async (
   // The `res.data` should match the structure of `TokenResponse`
   return res.data;
 };
+
+export const login = async (body: LoginT): Promise<boolean> => {
+  const res = await axios.post<boolean>(
+    'http://localhost:5000/check-company',
+    body
+  );
+  return res.data;
+};
+
 // /**
 //  * @endpoint: GET: /api/check-auth
 //  * @summary This hook is used to get the authentication status of the user.
@@ -65,13 +80,30 @@ export const useGetTokenStatus = <TError extends HTTPValidationError>(opts?: {
     mutationFn: (payload) => getTokenStatus(payload),
     onSuccess: (res, variables, context) => {
       opts?.mutation?.onSuccess?.(res, variables, context);
-      // Toastr.success('This is an amazing success message! ');
+
       localStorage.setItem('token', res?.token);
 
       // Show the success Toastr
       Toastr.success('Login successful!', () => {
         window.open('/', '_self');
       });
+    },
+    onError: (err) => {
+      console.log('err', err);
+      Toastr.error(err?.response?.data || 'error');
+    }
+  });
+};
+
+export const useLogin = <TError extends HTTPValidationError>(opts?: {
+  mutation?: UseMutationOptions<boolean, TError, LoginT>;
+}): UseMutationResult<boolean, TError, LoginT> => {
+  return useMutation({
+    ...(opts?.mutation || {}),
+    mutationFn: (payload) => login(payload),
+    onSuccess: (res, variables, context) => {
+      opts?.mutation?.onSuccess?.(res, variables, context);
+      sessionStorage.setItem('responseData', JSON.stringify(res));
     },
     onError: (err) => {
       console.log('err', err);
