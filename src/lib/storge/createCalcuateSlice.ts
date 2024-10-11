@@ -13,6 +13,8 @@ export type CalculationStateT = {
   calculatedData: CalculatedT | null;
   setCalculatedData: (data: CalculatedT) => void;
   openNextDrawer: NextDrawerType;
+  isAuthenticated: boolean;
+  setIsAuthenticated: (isAuthenticated: boolean) => void;
   setOpenNextDrawer: (data: NextDrawerType) => void;
 };
 
@@ -21,8 +23,11 @@ export const useCalculationStore = create<CalculationStateT>()(
   devtools((set) => ({
     calculatedData: null, // Initial state
     openNextDrawer: null,
+    isAuthenticated: false,
 
     setCalculatedData: (data: CalculatedT) => set({ calculatedData: data }),
+    setIsAuthenticated: (isAuthenticated: boolean) =>
+      set({ isAuthenticated: isAuthenticated }),
     setOpenNextDrawer: (data: NextDrawerType) => set({ openNextDrawer: data })
   }))
 );

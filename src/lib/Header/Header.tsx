@@ -7,6 +7,13 @@ import { useNavigate } from 'react-router';
 import { useCalculationStore } from '../storge/createCalcuateSlice';
 import Taxes from '../Taxes';
 
+type CompanyDataT = {
+  company_name: string;
+  company_logo: string;
+  company_description: string;
+  id: string;
+};
+
 type HeaderProps = {
   isSearch: boolean;
   isBack?: boolean;
@@ -17,6 +24,10 @@ type HeaderProps = {
     onClick: () => void;
   };
 };
+
+const data = sessionStorage.getItem('responseData');
+const companyData: CompanyDataT = data && JSON.parse(data);
+
 const Header: FC<HeaderProps> = (props) => {
   const { isSearch, primaryButton, isBack } = props;
   const navigate = useNavigate();
@@ -50,10 +61,10 @@ const Header: FC<HeaderProps> = (props) => {
               </Flex>
             )}
             <User
-              name="يحيا بالغالي علي"
-              description="مالك قارب نجم"
+              name={companyData.company_name}
+              description={companyData.company_description}
               avatarProps={{
-                src: 'https://i.pravatar.cc/150?u=a04258114e29026702d'
+                src: companyData.company_logo
               }}
             />
           </Flex>

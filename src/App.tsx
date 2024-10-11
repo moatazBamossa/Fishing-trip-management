@@ -8,13 +8,15 @@ import Steps from './lib/Steps/Steps';
 import Login from './lib/Login';
 import ProtectedRoute from './ProtectedRoute';
 import Details from './lib/Details';
+import { useCalculationStore } from './lib/storge/createCalcuateSlice';
 
 // Create a client outside of the App component
 const queryClient = new QueryClient();
 
 const App = () => {
-  const isAuthenticated = localStorage?.getItem('token');
-
+  const { isAuthenticated } = useCalculationStore();
+  // const isAuthenticated = localStorage?.getItem('token');
+  console.log('isAuthenticated', isAuthenticated);
   return (
     <NextUIProvider
       style={{
@@ -31,7 +33,7 @@ const App = () => {
           <Route
             path="/"
             element={
-              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Names />
               </ProtectedRoute>
             }
@@ -39,7 +41,7 @@ const App = () => {
           <Route
             path="/details"
             element={
-              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Details />
               </ProtectedRoute>
             }
@@ -47,7 +49,7 @@ const App = () => {
           <Route
             path="/steps/:id"
             element={
-              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Steps />
               </ProtectedRoute>
             }
@@ -55,7 +57,7 @@ const App = () => {
           <Route
             path="/operations/:id"
             element={
-              <ProtectedRoute isAuthenticated={!!isAuthenticated || false}>
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Operations />
               </ProtectedRoute>
             }

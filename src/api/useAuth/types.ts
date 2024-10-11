@@ -17,6 +17,11 @@ export type GetTokenStatusT = {
   password: string;
 };
 
+export type LoginT = {
+  name: string;
+  password: string;
+};
+
 export type TokenResponse = {
   token: string; // Adjust based on the actual API response structure
 };

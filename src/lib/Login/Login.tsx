@@ -3,9 +3,12 @@ import Icon from '@/components/FontAwesomeIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Input } from '@nextui-org/react';
 import { faWhatsapp, faFacebook } from '@fortawesome/free-brands-svg-icons';
-import { useState } from 'react';
-import { useGetTokenStatus } from '@/api/useAuth/useAuth';
+import { useEffect, useState } from 'react';
+import { useLogin } from '@/api/useAuth/useAuth';
 import { ToastContainer } from 'react-toastify';
+import { useCalculationStore } from '../storge/createCalcuateSlice';
+import { useNavigate } from 'react-router';
+import { Toastr } from '@/components/Toastr/Toastr';
 
 const Login = () => {
   const [canSee, setCanSee] = useState(false);
@@ -13,8 +16,11 @@ const Login = () => {
     userName: '',
     password: ''
   });
+  const navigate = useNavigate();
 
-  const { mutate: loginPage, isPending } = useGetTokenStatus();
+  const { setIsAuthenticated } = useCalculationStore();
+
+  const { mutate: loginPage, isPending } = useLogin();
 
   const phoneNumber = '780585979'; // Replace with your phone number
   const message = 'السلام عليكم'; // Your predefined message
@@ -33,6 +39,9 @@ const Login = () => {
     window.open(facebookPageUrl, '_blank', 'noopener,noreferrer');
   };
 
+  useEffect(() => {
+    sessionStorage.removeItem('responseData');
+  }, []);
   return (
     <Flex
       justifyCenter
@@ -94,15 +103,17 @@ const Login = () => {
           onClick={() => {
             loginPage(
               {
-                username: loginInput.userName,
+                name: loginInput.userName,
                 password: loginInput.password
+              },
+              {
+                onSuccess: () => {
+                  setIsAuthenticated(true);
+                  Toastr.success('Login successful!', () => {
+                    navigate('/');
+                  });
+                }
               }
-              // {
-              //   onSuccess: (res) => {
-              //     localStorage.setItem('token', res?.token);
-              //     window.open('/', '_self');
-              //   }
-              // }
             );
           }}
         >
