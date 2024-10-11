@@ -52,7 +52,7 @@ export const getTokenStatus = async (
 
 export const login = async (body: LoginT): Promise<boolean> => {
   const res = await axios.post<boolean>(
-    'http://localhost:5000/check-company',
+    'https://alshrarh-team-1.onrender.com/check-company',
     body
   );
   return res.data;
