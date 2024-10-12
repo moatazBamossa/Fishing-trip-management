@@ -15,16 +15,23 @@ const SuccessMessage = () => {
   const { setCalculatedData } = useCalculationStore();
   const navigate = useNavigate();
 
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
   useEffect(() => {
-    const data = calculationResult(values, taxes);
-    setCalculatedData(data);
+    const calculateAndNavigate = async () => {
+      const data = calculationResult(values, taxes);
 
-    const timer = setTimeout(() => {
+      // Wait for 1.5 seconds before navigating
+      await delay(1500);
       navigate('/details');
-    }, 1500);
 
-    return () => clearTimeout(timer);
-  }, []);
+      await delay(1500);
+      setCalculatedData(data);
+    };
+
+    calculateAndNavigate();
+  }, [values, navigate, setCalculatedData]);
 
   return (
     <>

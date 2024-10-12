@@ -14,13 +14,14 @@ type RadioFieldProps = {
   value?: string;
   onChange?: () => void;
   options: OptionsType[];
+  validate?: (value: string) => string | undefined;
 };
 
 const RadioField: FC<RadioFieldProps> = (props) => {
   const { name, label, color, value, options } = props;
 
   return (
-    <Field name={name} component="input" type="radio">
+    <Field name={name} component="input" type="radio" validate={props.validate}>
       {({ input }) => (
         <RadioGroup
           label={label}
