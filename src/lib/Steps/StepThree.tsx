@@ -56,10 +56,16 @@ const StepThree = () => {
           name="nakodah"
           options={options}
           color="primary"
+          validate={required}
         />
       )}
       {values.nakodah === 'other' && (
-        <TextField name="nakodah_arrows" placeholder="اخر " type="number" />
+        <TextField
+          name="nakodah_arrows"
+          placeholder="اخر "
+          type="number"
+          validate={required}
+        />
       )}
       <CheckboxField label="حساب الربان" name="check_captain" />
       {values.check_captain && (
@@ -69,10 +75,16 @@ const StepThree = () => {
           name="captain"
           options={options}
           color="primary"
+          validate={required}
         />
       )}
       {values.captain === 'other' && (
-        <TextField name="captain_arrows" placeholder="اخر " type="number" />
+        <TextField
+          name="captain_arrows"
+          placeholder="اخر "
+          type="number"
+          validate={required}
+        />
       )}
     </div>
   );
