@@ -18,7 +18,7 @@ const Login = () => {
   });
   const navigate = useNavigate();
 
-  const { setIsAuthenticated } = useCalculationStore();
+  const { setIsAuthenticated, setCompanyData } = useCalculationStore();
 
   const { mutate: loginPage, isPending } = useLogin();
 
@@ -37,6 +37,31 @@ const Login = () => {
 
   const handleFaceClick = () => {
     window.open(facebookPageUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handelLogin = () => {
+    loginPage(
+      {
+        name: loginInput.userName,
+        password: loginInput.password
+      },
+      {
+        onSuccess: (res) => {
+          setIsAuthenticated(true);
+          Toastr.success('Login successful!', () => {
+            sessionStorage.clear();
+            sessionStorage.setItem('responseData', JSON.stringify(res));
+            setCompanyData(res);
+            navigate('/');
+          });
+        }
+      }
+    );
+  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handelLogin();
+    }
   };
 
   useEffect(() => {
@@ -75,6 +100,7 @@ const Login = () => {
         </Flex>
         <Flex flexCol style={{ gap: 8, minWidth: 300 }}>
           <Input
+            onKeyDown={handleKeyDown}
             placeholder="اسم المستخدم"
             startContent={<Icon name="user" />}
             onChange={(val) =>
@@ -82,6 +108,7 @@ const Login = () => {
             }
           />
           <Input
+            onKeyDown={handleKeyDown}
             placeholder="كلمه السر"
             startContent={<Icon name="lock" />}
             type={canSee ? 'text' : 'password'}
@@ -100,22 +127,7 @@ const Login = () => {
         <Button
           isDisabled={!loginInput.userName || !loginInput.password}
           isLoading={isPending}
-          onClick={() => {
-            loginPage(
-              {
-                name: loginInput.userName,
-                password: loginInput.password
-              },
-              {
-                onSuccess: () => {
-                  setIsAuthenticated(true);
-                  Toastr.success('Login successful!', () => {
-                    navigate('/');
-                  });
-                }
-              }
-            );
-          }}
+          onClick={handelLogin}
         >
           تسجيل الدخول
         </Button>

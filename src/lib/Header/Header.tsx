@@ -7,13 +7,6 @@ import { useNavigate } from 'react-router';
 import { useCalculationStore } from '../storge/createCalcuateSlice';
 import Taxes from '../Taxes';
 
-type CompanyDataT = {
-  company_name: string;
-  company_logo: string;
-  company_description: string;
-  id: string;
-};
-
 type HeaderProps = {
   isSearch: boolean;
   isBack?: boolean;
@@ -25,13 +18,10 @@ type HeaderProps = {
   };
 };
 
-const data = sessionStorage.getItem('responseData');
-const companyData: CompanyDataT = data && JSON.parse(data);
-
 const Header: FC<HeaderProps> = (props) => {
   const { isSearch, primaryButton, isBack } = props;
   const navigate = useNavigate();
-  const { setOpenNextDrawer } = useCalculationStore();
+  const { setOpenNextDrawer, companyData } = useCalculationStore();
   const isDesktop = useMediaQuery('(min-width: 850px)');
 
   return (
@@ -61,10 +51,10 @@ const Header: FC<HeaderProps> = (props) => {
               </Flex>
             )}
             <User
-              name={companyData.company_name}
-              description={companyData.company_description}
+              name={companyData?.company_name}
+              description={companyData?.company_description}
               avatarProps={{
-                src: companyData.company_logo
+                src: companyData?.company_logo
               }}
             />
           </Flex>

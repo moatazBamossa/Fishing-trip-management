@@ -1,13 +1,10 @@
-import React from 'react';
-import './style.module.css'; // Import your styles here
+import { FC } from 'react';
+import './style.css'; // Import the CSS styles
 
-const Loader: React.FC = () => {
+const Loader: FC = () => {
   return (
-    <div className="loader-overlay">
-      <div className="spinner">
-        <div className="double-bounce1"></div>
-        <div className="double-bounce2"></div>
-      </div>
+    <div className="loader-container">
+      <div className="loader"></div>
     </div>
   );
 };

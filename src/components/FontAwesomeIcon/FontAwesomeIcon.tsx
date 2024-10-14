@@ -23,6 +23,7 @@ const Icon: FC<IconProps> = ({ name, size, color, ...rest }) => {
 
   return (
     <FontAwesomeIcon
+      className="cursor-pointer"
       {...rest}
       {...(color && { color: color })}
       {...(size && { size: size })}

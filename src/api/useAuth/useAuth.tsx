@@ -1,42 +1,23 @@
 import {
   useMutation,
   UseMutationOptions,
-  UseMutationResult
+  UseMutationResult,
+  useQuery,
+  UseQueryOptions,
+  UseQueryResult
 } from '@tanstack/react-query';
 
 import {
+  DataTypeResponse,
   GetTokenStatusT,
+  getUsersT,
   HTTPValidationError,
   LoginT,
   TokenResponse
 } from './types'; // Adjust the import based on your types
 import axios from 'axios';
 import { Toastr } from '@/components/Toastr/Toastr';
-
-// export const getAuthStatus = async (): Promise<boolean> => {
-//   const response = await axios({
-//     method: 'get',
-//     url: 'https://randomuser.me/api/'
-//   });
-//   // const response = await axios.get<AuthStatusResponse>(
-//   //   'https://randomuser.me/api/'
-//   // ); // Adjust the URL based on your backend
-
-//   console.log('response', response);
-//   return response.data?.results[0].gender === 'male' ?? false; // Assuming the response contains this field
-// };
-
-// export const getTokenStatus = async (
-//   body: GetTokenStatusT
-// ): Promise<TokenResponse> => {
-//   const res = await axios({
-//     method: 'post',
-//     url: 'https://fakestoreapi.com/auth/login',
-//     data: body
-//   });
-//   console.log('res', res);
-//   return res.data;
-// };
+import { CompanyDataT } from '@/lib/InterFace/helper';
 
 export const getTokenStatus = async (
   body: GetTokenStatusT
@@ -50,12 +31,22 @@ export const getTokenStatus = async (
   return res.data;
 };
 
-export const login = async (body: LoginT): Promise<boolean> => {
-  const res = await axios.post<boolean>(
+export const login = async (body: LoginT): Promise<CompanyDataT> => {
+  const res = await axios.post<CompanyDataT>(
     'https://alshrarh-team-1.onrender.com/check-company',
     body
   );
   return res.data;
+};
+
+export const getAuthStat = async (
+  params: getUsersT
+): Promise<DataTypeResponse> => {
+  const res = await axios.get<DataTypeResponse>(
+    `https://alshrarh-team-1.onrender.com/check-company/${params.company_id}`
+  );
+
+  return res.data; // This should return the data according to your DataTypeResponse
 };
 
 // /**
@@ -96,18 +87,30 @@ export const useGetTokenStatus = <TError extends HTTPValidationError>(opts?: {
 };
 
 export const useLogin = <TError extends HTTPValidationError>(opts?: {
-  mutation?: UseMutationOptions<boolean, TError, LoginT>;
-}): UseMutationResult<boolean, TError, LoginT> => {
+  mutation?: UseMutationOptions<CompanyDataT, TError, LoginT>;
+}): UseMutationResult<CompanyDataT, TError, LoginT> => {
   return useMutation({
     ...(opts?.mutation || {}),
     mutationFn: (payload) => login(payload),
     onSuccess: (res, variables, context) => {
       opts?.mutation?.onSuccess?.(res, variables, context);
-      sessionStorage.setItem('responseData', JSON.stringify(res));
     },
     onError: (err) => {
       console.log('err', err);
       Toastr.error(err?.response?.data || 'error');
     }
+  });
+};
+
+export const useGetAuth = <TData = boolean, TError = HTTPValidationError>(
+  company_id: getUsersT,
+  opts?: {
+    query?: UseQueryOptions<DataTypeResponse, TError, TData>;
+  }
+): UseQueryResult<TData, TError> => {
+  return useQuery<DataTypeResponse, TError, TData>({
+    ...(opts?.query || {}),
+    queryKey: opts?.query?.queryKey ?? ['getAuth', company_id], // Ensure the queryKey is unique based on company_id
+    queryFn: () => getAuthStat(company_id)
   });
 };

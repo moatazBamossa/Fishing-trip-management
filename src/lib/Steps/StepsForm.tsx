@@ -107,7 +107,7 @@ const StepsForm = () => {
       {({ handleSubmit, valid, values, form }) => {
         const activeStep = values?.step;
         const StepComponent = stepsCalculating[activeStep];
-        console.log('activeStep', activeStep);
+
         return (
           <form onSubmit={handleSubmit}>
             <Flex justifyCenter itemsCenter className="gap-4 w-full">

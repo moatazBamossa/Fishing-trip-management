@@ -15,8 +15,7 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const { isAuthenticated } = useCalculationStore();
-  // const isAuthenticated = localStorage?.getItem('token');
-  console.log('isAuthenticated', isAuthenticated);
+
   return (
     <NextUIProvider
       style={{
