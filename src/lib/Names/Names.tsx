@@ -233,7 +233,8 @@ const Names = () => {
                         ...prev,
                         username: username,
                         description: description ?? '',
-                        typeUserModal: 'update'
+                        typeUserModal: 'update',
+                        id: user._id
                       }));
 
                       handelOpenNewUser('update');
@@ -244,7 +245,7 @@ const Names = () => {
               ))}
             </div>
           ) : (
-            <NothingYet />
+            <NothingYet handelOpenNewUser={handelOpenNewUser} />
           )}
         </>
       )}
