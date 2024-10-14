@@ -4,7 +4,8 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button
+  Button,
+  ButtonProps
 } from '@nextui-org/react';
 import { FC } from 'react';
 
@@ -15,10 +16,14 @@ type NextModalProps = {
   children?: JSX.Element;
   title: string;
   onClick?: () => void;
+  submit?: {
+    label: string;
+    color?: ButtonProps['color'];
+  };
 };
 
 const NextModal: FC<NextModalProps> = (props) => {
-  const { isOpen, children, title, disabled } = props;
+  const { isOpen, children, title, disabled, submit } = props;
 
   return (
     <Modal
@@ -38,10 +43,10 @@ const NextModal: FC<NextModalProps> = (props) => {
               </Button>
               <Button
                 isDisabled={disabled}
-                color="primary"
+                color={submit?.color ?? 'primary'}
                 onPress={props.onClick || onClose}
               >
-                اضافه
+                {submit?.label ?? 'اضافه'}
               </Button>
             </ModalFooter>
           </>

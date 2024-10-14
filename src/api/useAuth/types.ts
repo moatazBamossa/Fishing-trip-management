@@ -25,3 +25,43 @@ export type LoginT = {
 export type TokenResponse = {
   token: string; // Adjust based on the actual API response structure
 };
+
+export type getUsersT = {
+  company_id: string;
+};
+
+export type CreateUserParams = {
+  name: string;
+  description: string;
+  company_id: string; // Use the _id from the company object
+};
+
+export type DeleteUserParams = {
+  company_id: string; // Use the _id from the company object
+  user_id: string; // Use the _id from the company object
+};
+export type UpdateUserParams = {
+  company_id: string; // Use the _id from the company object
+  user_id: string; // Use the _id from the company object
+  params: {
+    name: string;
+    description: string;
+  };
+};
+
+export type UserType = {
+  _id: string;
+  name: string;
+  description: string;
+  company_id: string;
+  created_at: string;
+};
+
+export type DataTypeResponse = {
+  data: {
+    users?: UserType[];
+    auth?: boolean;
+  };
+  message: string;
+  success: boolean;
+};

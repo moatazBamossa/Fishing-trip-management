@@ -94,6 +94,12 @@ export type CalculatedT = {
   allOwnerArrow: number;
 };
 
+export type CompanyDataT = {
+  company_name: string;
+  company_logo: string;
+  company_description: string;
+  id: string;
+};
 export const calculationResult = (
   values: CalculatedDataT,
   taxes: TaxesType
