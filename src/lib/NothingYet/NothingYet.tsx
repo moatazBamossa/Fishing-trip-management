@@ -1,11 +1,12 @@
 // NoOperations.js
 import { Button } from '@nextui-org/button';
+import { FC } from 'react';
 
-const NothingYet = () => {
-  const handleAddOperation = () => {
-    alert('Add operation clicked!');
-  };
+type NothingYetPros = {
+  handelOpenNewUser?: () => void;
+};
 
+const NothingYet: FC<NothingYetPros> = (props) => {
   const styles = {
     container: {
       display: 'flex',
@@ -59,7 +60,11 @@ const NothingYet = () => {
       <p style={styles.message}>
         يشتاف ماشي بيانات يالغالي اذا بغيت بتضيف عندك الزر تحت
       </p>
-      <Button color="primary" variant="shadow" onClick={handleAddOperation}>
+      <Button
+        color="primary"
+        variant="shadow"
+        onClick={props.handelOpenNewUser}
+      >
         اضافه مستخدم جديد
       </Button>
     </div>
