@@ -201,7 +201,7 @@ const Names = () => {
         primaryButton={{
           label: 'اضافه مستخدم جديد',
           onClick: () => {
-            handelOpenNewUser();
+            handelOpenNewUser('new');
           }
         }}
       />
@@ -245,7 +245,7 @@ const Names = () => {
               ))}
             </div>
           ) : (
-            <NothingYet handelOpenNewUser={handelOpenNewUser} />
+            <NothingYet handelOpenNewUser={() => handelOpenNewUser('new')} />
           )}
         </>
       )}
