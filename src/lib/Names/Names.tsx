@@ -27,7 +27,7 @@ const Names = () => {
 
   const company_id = companyData?.id ?? '';
 
-  const { data: isAuth } = useGetAuth(
+  const { data: isAuth, isFetching: authFetching } = useGetAuth(
     { company_id },
     {
       query: {
@@ -195,6 +195,7 @@ const Names = () => {
       }}
     >
       <Header
+        isLoading={authFetching}
         isSearch={filter.isSearch}
         onSearching={handelSearch}
         handelClickSearch={handelClickSearch}
@@ -205,7 +206,8 @@ const Names = () => {
           }
         }}
       />
-      {isFetching || isPending || pending || reload ? (
+
+      {isFetching || isPending || pending || reload || authFetching ? (
         <Flex justifyCenter itemsCenter style={{ height: 200 }}>
           <Loader />
         </Flex>
