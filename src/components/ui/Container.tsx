@@ -3,6 +3,7 @@ import Flex from '../Flex';
 import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../FontAwesomeIcon';
+import Style from './style.module.css';
 
 type ContainerProps = {
   title: string;
@@ -30,9 +31,7 @@ const Container: FC<ContainerProps> = (props) => {
         gap: 8,
         borderRadius: 8
       }}
-      className={
-        'bg-base-colors-white-1000 border border-b-base-colors-grey-200 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.05)]'
-      }
+      className={`bg-base-colors-white-1000 border border-b-base-colors-grey-200 shadow-[0px_4px_8px_0px_rgba(0,0,0,0.05)] ${Style.tracking_in_contract_bck_bottom}`}
     >
       <Flex justifyBetween>
         <Flex flexCol className="gap-[2px] flex-grow">
