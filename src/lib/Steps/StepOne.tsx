@@ -47,7 +47,7 @@ const StepOne = () => {
               showMonthAndYearPickers
               variant="bordered"
               className="max-w-md"
-              label="Appointment date"
+              label="تاريخ الرحله"
               defaultValue={today}
               onChange={(date) => {
                 change('dateTrip', `${date.day}/ ${date.month}/ ${date.year}`);

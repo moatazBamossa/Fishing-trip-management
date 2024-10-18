@@ -38,7 +38,7 @@ const App = () => {
             }
           />
           <Route
-            path="/details"
+            path="/details/:id"
             element={
               <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Details />

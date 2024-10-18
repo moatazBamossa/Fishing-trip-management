@@ -12,6 +12,7 @@ import SuccessMessage from './SuccessMessage';
 import { TaxesType } from '../Taxes/Taxes';
 import { useNavigate } from 'react-router';
 import { CalculatedDataT, StepComponentsT } from '../InterFace/helper';
+import { useCalculationStore } from '../storge/createCalcuateSlice';
 
 const stepsCalculating: StepComponentsT = {
   0: StepOne,
@@ -27,7 +28,7 @@ const taxes: TaxesType = retrievedData && JSON.parse(retrievedData);
 
 const StepsForm = () => {
   const navigate = useNavigate();
-
+  const { calculatedData } = useCalculationStore();
   const onSubmit = (values: CalculatedDataT) => {
     let totalPrice = values.fishing.reduce((sum, item) => {
       return sum + Number(item.weight) * Number(item.price);
@@ -90,15 +91,38 @@ const StepsForm = () => {
 
   const isDesktop = useMediaQuery('(min-width: 850px)');
 
+  const initialValue = {
+    step: 0,
+    number_trip: calculatedData?.numberTrip,
+    is_boat_rate: !!calculatedData?.rate_boat_price,
+    rate_boat_price: calculatedData?.rate_boat_price,
+    owner_arrow: calculatedData?.owner_arrow,
+    fisher_arrow: calculatedData?.fisher_arrow,
+    other_arrow: calculatedData?.other_arrow,
+    dateTrip: calculatedData?.dateTrip,
+    expenses: calculatedData?.expenses,
+    fishing: calculatedData?.typeFishing,
+    check_nakodah: !!calculatedData?.nakhdah,
+    check_captain: !!calculatedData?.calculateCaptain,
+    nakodah: calculatedData?.nakhdah,
+    captain: calculatedData?.captain,
+    nakodah_arrows: calculatedData?.nakodah_arrows,
+    captain_arrows: calculatedData?.captain_arrows
+  };
+
   return (
     <Form
       onSubmit={onSubmit}
-      initialValues={{
-        step: 0,
-        dateTrip: `${today.day}/ ${today.month}/ ${today.year}`,
-        fishing: [{ occurrence: 1 }],
-        expenses: [{ occurrence: 1 }]
-      }}
+      initialValues={
+        calculatedData
+          ? initialValue
+          : {
+              step: 0,
+              dateTrip: `${today.day}/ ${today.month}/ ${today.year}`,
+              fishing: [{ occurrence: 1 }],
+              expenses: [{ occurrence: 1 }]
+            }
+      }
       mutators={{
         ...arrayMutators
       }}
@@ -155,42 +179,43 @@ const StepsForm = () => {
                 >
                   <StepComponent />
                 </Flex>
-                <Flex className="gap-2">
-                  <Button
-                    onClick={() => {
-                      if (activeStep !== steps.length - 1) {
+                {activeStep !== steps.length - 1 && (
+                  <Flex className="gap-2">
+                    <Button
+                      onClick={() => {
+                        if (activeStep !== steps.length - 1) {
+                          form.change(
+                            'step',
+                            (+values.step + 1) as keyof StepComponentsT
+                          );
+                          return;
+                        }
+
+                        navigate('/details');
+                      }}
+                      isDisabled={activeStep === steps.length || !valid}
+                      variant="shadow"
+                      color="primary"
+                    >
+                      {activeStep === steps.length - 1
+                        ? 'مشاهده التفاصيل'
+                        : 'التالي'}
+                    </Button>
+                    <Button
+                      onClick={() => {
                         form.change(
                           'step',
-                          (+values.step + 1) as keyof StepComponentsT
+                          (+values.step - 1) as keyof StepComponentsT
                         );
-                        return;
-                      }
-
-                      navigate('/details');
-                      // handleSubmit();
-                    }}
-                    isDisabled={activeStep === steps.length || !valid}
-                    variant="shadow"
-                    color="primary"
-                  >
-                    {activeStep === steps.length - 1
-                      ? 'مشاهده التفاصيل'
-                      : 'التالي'}
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      form.change(
-                        'step',
-                        (+values.step - 1) as keyof StepComponentsT
-                      );
-                    }}
-                    isDisabled={activeStep <= 0}
-                    variant="shadow"
-                    color="primary"
-                  >
-                    السابق
-                  </Button>
-                </Flex>
+                      }}
+                      isDisabled={activeStep <= 0}
+                      variant="shadow"
+                      color="primary"
+                    >
+                      السابق
+                    </Button>
+                  </Flex>
+                )}
               </Flex>
             </Flex>
           </form>

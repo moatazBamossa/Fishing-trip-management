@@ -13,7 +13,7 @@ const isAuth = data && JSON.parse(data);
 // Define the type for the Calculation state
 export type CalculationStateT = {
   calculatedData: CalculatedT | null;
-  setCalculatedData: (data: CalculatedT) => void;
+  setCalculatedData: (data: CalculatedT | null) => void;
   openNextDrawer: NextDrawerType;
   isAuthenticated: boolean;
   companyData: CompanyDataT | null;
@@ -30,7 +30,8 @@ export const useCalculationStore = create<CalculationStateT>()(
     companyData: isAuth || null,
     isAuthenticated: !!isAuth || false,
 
-    setCalculatedData: (data: CalculatedT) => set({ calculatedData: data }),
+    setCalculatedData: (data: CalculatedT | null) =>
+      set({ calculatedData: data }),
     setIsAuthenticated: (isAuthenticated: boolean) =>
       set({ isAuthenticated: isAuthenticated }),
     setOpenNextDrawer: (data: NextDrawerType) => set({ openNextDrawer: data }),
