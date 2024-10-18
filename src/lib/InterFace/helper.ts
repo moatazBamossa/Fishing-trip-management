@@ -46,13 +46,13 @@ export type StepComponentsT = {
   3: () => JSX.Element;
 };
 
-type ExpensesT = {
+export type ExpensesT = {
   occurrence: number;
   bay: string;
   value: number;
 };
 
-type FishingT = {
+export type FishingT = {
   occurrence: 1;
   type: string;
   weight: number;
@@ -92,6 +92,18 @@ export type CalculatedT = {
   boatTaxes: number;
   calculateCaptain: number;
   allOwnerArrow: number;
+  numberTrip: string;
+  dateTrip: string;
+  typeFishing: FishingT[];
+  expenses: ExpensesT[];
+  rate_boat_price?: number;
+  owner_arrow: number;
+  fisher_arrow: number;
+  other_arrow?: number;
+  nakhdah?: string;
+  nakodah_arrows?: string;
+  captain?: string;
+  captain_arrows?: string;
 };
 
 export type CompanyDataT = {
@@ -100,6 +112,15 @@ export type CompanyDataT = {
   company_description: string;
   id: string;
 };
+
+export type TabsIdT = 'all' | 'details' | 'expenses' | 'arrows';
+
+export const NumberFormatter = (value: number) => {
+  const formattedValue = new Intl.NumberFormat('en-US').format(value);
+
+  return formattedValue;
+};
+
 export const calculationResult = (
   values: CalculatedDataT,
   taxes: TaxesType
@@ -143,6 +164,7 @@ export const calculationResult = (
         : shared * +values.nakodah_arrows
       : 0; // Return 0 if check_nakodah is false
   };
+
   const calculateNakhdah = nakhdah();
   boatTaxes -= calculateNakhdah;
 
@@ -175,6 +197,18 @@ export const calculationResult = (
     calculateNakhdah,
     boatTaxes,
     calculateCaptain,
-    allOwnerArrow
+    allOwnerArrow,
+    numberTrip: values.number_trip,
+    dateTrip: values.dateTrip,
+    typeFishing: values.fishing,
+    expenses: values.expenses,
+    rate_boat_price: values?.rate_boat_price ?? 0,
+    owner_arrow: values.owner_arrow,
+    fisher_arrow: values.fisher_arrow,
+    other_arrow: values?.other_arrow ?? 0,
+    nakhdah: values?.nakodah,
+    nakodah_arrows: values?.nakodah_arrows,
+    captain: values?.captain,
+    captain_arrows: values?.captain_arrows
   };
 };

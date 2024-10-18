@@ -40,7 +40,7 @@ const Taxes: FC = () => {
     <NextModal
       isOpen={openNextDrawer === 'taxes'}
       handelOpenChange={() => setOpenNextDrawer(null)}
-      title={'الضرائب'}
+      title={'نسب عامة'}
       onClick={() => onSubmit(formData)}
     >
       <Flex

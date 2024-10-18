@@ -4,18 +4,20 @@ import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../FontAwesomeIcon';
 import Style from './style.module.css';
+import { useCalculationStore } from '@/lib/storge/createCalcuateSlice';
 
 type ContainerProps = {
   title: string;
   description?: string;
   number: number;
-  id: number;
+  id: string;
   handelEditName: (title: string, description?: string) => void;
   handelDeleteUser: () => void;
 };
 
 const Container: FC<ContainerProps> = (props) => {
   const navigate = useNavigate();
+  const { setCalculatedData } = useCalculationStore();
   const { title, description, number, id } = props;
 
   return (
@@ -81,7 +83,10 @@ const Container: FC<ContainerProps> = (props) => {
           </Button>
         )}
         <Button
-          onClick={() => navigate(`/steps/${id}`)}
+          onClick={() => {
+            setCalculatedData(null);
+            navigate(`/steps/${id}`);
+          }}
           size="md"
           variant="bordered"
           color="primary"

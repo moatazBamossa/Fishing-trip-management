@@ -47,7 +47,7 @@ const StepThree = () => {
         placeholder="اسهم البحره"
         type="number"
       />
-      <TextField name="other_arrow" placeholder="اخر " type="number" />
+      <TextField name="other_arrow" placeholder="اخر" type="number" />
       <CheckboxField label="حساب الناخوده" name="check_nakodah" />
       {values.check_nakodah && (
         <RadioField
@@ -71,7 +71,7 @@ const StepThree = () => {
       {values.check_captain && (
         <RadioField
           value={values?.captain}
-          label="الناخودة"
+          label="الربان"
           name="captain"
           options={options}
           color="primary"

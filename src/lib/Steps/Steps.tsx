@@ -17,6 +17,7 @@ import { parseDate } from '@internationalized/date';
 // import { ConstData } from '../InterFace/InterFace';
 // import { useCalculationStore } from '../storge/createCalcuateSlice';
 import StepsForm from './StepsForm';
+import { useCalculationStore } from '../storge/createCalcuateSlice';
 
 // const steps = ['تفاصيل الرحله', 'السركال', 'الاسهم', 'التفاصيل'];
 
@@ -42,7 +43,7 @@ export const today = parseDate(new Date().toISOString().split('T')[0]);
 const Steps = () => {
   const navigate = useNavigate();
   // const [activeStep, setActiveStep] = useState<keyof StepComponentsT>(0);
-  // const { setCalculatedData } = useCalculationStore();
+  const { setCalculatedData } = useCalculationStore();
 
   // const onSubmit = (values: ValuesType | Record<string, string>) => {
   //   console.log('values', values);
@@ -131,7 +132,14 @@ const Steps = () => {
         <p>يمكنك حساب جديد</p>
         <StepsForm />
       </Flex>
-      <Button color="warning" variant="shadow" onClick={() => navigate(-1)}>
+      <Button
+        color="warning"
+        variant="shadow"
+        onClick={() => {
+          navigate('/');
+          setCalculatedData(null);
+        }}
+      >
         الرجوع الى القائمه الرئيسية
       </Button>
     </Flex>

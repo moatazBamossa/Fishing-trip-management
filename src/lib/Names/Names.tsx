@@ -14,8 +14,8 @@ import {
   useGetUsers,
   useUpdateUser
 } from '@/api/useAuth/useUsers';
-import Loader from '@/components/Loader';
 import { useGetAuth } from '@/api/useAuth/useAuth';
+import NewLoader from '@/components/NewLoader';
 
 const retrievedData = localStorage?.getItem('taxesData');
 
@@ -209,7 +209,7 @@ const Names = () => {
 
       {isFetching || isPending || pending || reload || authFetching ? (
         <Flex justifyCenter itemsCenter style={{ height: 200 }}>
-          <Loader />
+          <NewLoader />
         </Flex>
       ) : (
         <>
@@ -228,7 +228,7 @@ const Names = () => {
                     key={i}
                     title={user.name}
                     number={0}
-                    id={+user._id}
+                    id={user._id}
                     description={user.description}
                     handelEditName={(username, description) => {
                       setFilter((prev) => ({
