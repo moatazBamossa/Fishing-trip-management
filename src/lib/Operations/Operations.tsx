@@ -1,56 +1,59 @@
 import Header from '../Header/Header';
-import { useState } from 'react';
-import ReportContainer from '../ReportContainer/ReportContainer';
+import { FC, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import NothingYet from '../NothingYet/NothingYet';
+import { useGetTrip } from '@/api/useAuth/useTrip';
+import NewLoader from '@/components/NewLoader';
+import TripCard from '@/components/TripCard';
 
-const dataTemp = [
-  {
-    title: ' رحله رقم ١',
-    date: '18/8/2021',
-    nameId: 1
-  },
-  {
-    title: ' رحله رقم ٢',
-    date: '18/8/2021',
-    nameId: 1
-  },
-  {
-    title: ' رحله رقم ٣',
-    date: '18/8/2021',
-    nameId: 2
-  },
-  {
-    title: ' رحله رقم ٤',
-    date: '18/8/2021',
-    nameId: 2
-  }
-];
-
-const Operations = () => {
+const Operations: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { data, isFetching } = useGetTrip(
+    { id: id ?? '' },
+    {
+      query: {
+        select: (s) => s.data.trips,
+        enabled: !!id, // Enable the query only if company_id is available
+        queryKey: ['getTrip']
+      }
+    }
+  );
+  console.log('data', data);
 
-  const [search, setSearch] = useState({
+  const [filter, setFilter] = useState({
     isSearch: false,
-    searching: dataTemp
+    searching: data
   });
 
-  const handelSearch = (value: string) => {
-    const data = dataTemp.filter((item) => item.title.includes(value));
-    setSearch((prev) => ({
+  const updatedUsers = useMemo(() => {
+    setFilter((prev) => ({
       ...prev,
-      searching: data
+      searching: data || []
+    }));
+  }, [data]);
+
+  const handelSearch = (value: string) => {
+    const dataSearch = data?.filter(
+      (item) => item?.number_trip?.includes(value)
+    );
+    setFilter((prev) => ({
+      ...prev,
+      searching: dataSearch
     }));
   };
   const handelClickSearch = () => {
-    setSearch((prev) => ({
+    setFilter((prev) => ({
       ...prev,
       isSearch: !prev.isSearch
     }));
   };
 
-  if (!id) return null;
+  if (isFetching) return <NewLoader />;
+
+  if (data && data !== filter.searching) {
+    updatedUsers;
+  }
 
   return (
     <div
@@ -59,7 +62,7 @@ const Operations = () => {
       }}
     >
       <Header
-        isSearch={search.isSearch}
+        isSearch={filter.isSearch}
         onSearching={handelSearch}
         handelClickSearch={handelClickSearch}
         primaryButton={{
@@ -76,10 +79,14 @@ const Operations = () => {
           gridTemplateColumns: 'repeat(auto-fill,minmax(332px,1fr))'
         }}
       >
-        {search.searching.length ? (
-          search.searching?.map((operation, i) => {
-            if (operation.nameId === +id)
-              return <ReportContainer {...operation} key={i} />;
+        {filter?.searching?.length ? (
+          filter.searching?.map((operation) => {
+            return (
+              <TripCard
+                numberTrip={operation.number_trip}
+                dateTrip={operation.dateTrip}
+              />
+            );
           })
         ) : (
           <NothingYet />

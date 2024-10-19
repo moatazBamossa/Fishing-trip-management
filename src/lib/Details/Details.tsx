@@ -159,15 +159,14 @@ const ProductPage = () => {
                       {item?.description?.map((des, i) => (
                         <div className="product-detail" key={i}>
                           {'bay' in des ? (
-                            // Render for ExpensesT
                             <>
-                              <strong>{des.bay}:</strong> {des.value}
+                              <strong>{des.bay}:</strong>
+                              {NumberFormatter(des.value)}
                             </>
                           ) : (
-                            // Render for FishingT
                             <>
                               <strong>{des.type}:</strong>
-                              {des.weight * des.price}
+                              {NumberFormatter(des.weight * des.price)}
                             </>
                           )}
                         </div>
