@@ -9,6 +9,7 @@ import { Divider, Button } from '@nextui-org/react';
 import { CalculatedT, NumberFormatter, TabsIdT } from '../InterFace/helper';
 import { useNavigate, useParams } from 'react-router';
 import NewLoader from '@/components/NewLoader';
+import { useTrip } from '@/api/useAuth/useTrip';
 
 const tabs = [
   {
@@ -106,6 +107,7 @@ const processedData = (val: CalculatedT) => [
 
 const ProductPage = () => {
   const { calculatedData, setCalculatedData } = useCalculationStore();
+  const { mutate: addTrip, isPending } = useTrip();
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -128,6 +130,7 @@ const ProductPage = () => {
     return <NewLoader />;
   }
 
+  if (isPending) return <NewLoader />;
   return (
     <div className="product-page">
       <header className="product-header">
@@ -198,7 +201,30 @@ const ProductPage = () => {
           color="warning"
           variant="shadow"
           onClick={() => {
-            console.log('id', id);
+            if (id)
+              addTrip(
+                {
+                  step: '0',
+                  number_trip: calculatedData.numberTrip,
+                  user_id: id,
+                  owner_arrow: calculatedData.owner_arrow,
+                  fisher_arrow: calculatedData.fisher_arrow,
+                  other_arrow: calculatedData?.other_arrow ?? 0,
+                  dateTrip: calculatedData.dateTrip,
+                  rate_boat_price: calculatedData.rate_boat_price ?? 0,
+                  nakodah: calculatedData.nakhdah ?? '',
+                  captain: calculatedData.captain ?? '',
+                  nakodah_arrows: calculatedData.nakodah_arrows ?? '',
+                  captain_arrows: calculatedData.captain_arrows ?? '',
+                  expenses: calculatedData.expenses,
+                  fishing: calculatedData.typeFishing
+                },
+                {
+                  onSuccess: () => {
+                    navigate('/');
+                  }
+                }
+              );
           }}
         >
           حفظ

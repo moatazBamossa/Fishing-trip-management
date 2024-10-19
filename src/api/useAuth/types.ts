@@ -96,6 +96,23 @@ export type Trips = {
   __v: number;
 };
 
+export type CreateTripParams = {
+  step: string;
+  number_trip: string;
+  user_id: string;
+  owner_arrow: number;
+  fisher_arrow: number;
+  other_arrow: number;
+  dateTrip: string;
+  rate_boat_price: number;
+  nakodah: string;
+  captain: string;
+  nakodah_arrows: string;
+  captain_arrows: string;
+  expenses: ExpensesT[];
+  fishing: FishingT[];
+};
+
 export type DataTypeResponse = {
   data: {
     users?: UserType[];
