@@ -1,6 +1,6 @@
 import { CardContent, Typography } from '@mui/material';
 import { Card } from '@nextui-org/react';
-import React from 'react';
+import React, { FC } from 'react';
 import Icon from '../FontAwesomeIcon';
 import Flex from '../Flex';
 
@@ -8,9 +8,11 @@ import Flex from '../Flex';
 type TripCardProps = {
   numberTrip: string;
   dateTrip: string;
+  handelView: () => void;
 };
 
-const TripCard: React.FC<TripCardProps> = ({ numberTrip, dateTrip }) => {
+const TripCard: FC<TripCardProps> = (props) => {
+  const { numberTrip, dateTrip } = props;
   return (
     <Card
       style={{
@@ -42,7 +44,13 @@ const TripCard: React.FC<TripCardProps> = ({ numberTrip, dateTrip }) => {
 
         <Flex justifyCenter itemsCenter style={{ gap: 12 }}>
           <Icon name="edit" size="xl" color="blue" />
-          <Icon name="eye" size="xl" />
+          <Icon
+            name="eye"
+            size="xl"
+            onClick={() => {
+              props.handelView();
+            }}
+          />
           <Icon name="trash" size="lg" color="red" />
         </Flex>
       </CardContent>

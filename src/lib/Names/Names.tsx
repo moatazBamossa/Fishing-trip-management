@@ -52,6 +52,7 @@ const Names = () => {
       }
     }
   );
+
   const [filter, setFilter] = useState({
     isSearch: false,
     searching: users || [],

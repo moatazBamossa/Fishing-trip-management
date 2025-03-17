@@ -2,20 +2,22 @@ import Header from '../Header/Header';
 import { FC, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import NothingYet from '../NothingYet/NothingYet';
-import { useGetTrip } from '@/api/useAuth/useTrip';
+import { useGetAllTrips } from '@/api/useAuth/useTrip';
 import NewLoader from '@/components/NewLoader';
 import TripCard from '@/components/TripCard';
+import { useCalculationStore } from '../storge/createCalcuateSlice';
 
 const Operations: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, isFetching } = useGetTrip(
+  const { setCalculatedData } = useCalculationStore();
+  const { data, isFetching } = useGetAllTrips(
     { id: id ?? '' },
     {
       query: {
         select: (s) => s.data.trips,
         enabled: !!id, // Enable the query only if company_id is available
-        queryKey: ['getTrip']
+        queryKey: ['getAllTrips']
       }
     }
   );
@@ -55,6 +57,10 @@ const Operations: FC = () => {
     updatedUsers;
   }
 
+  const handelViewOperation = (tripId) => {
+    navigate(`/details/${id}?trip_id=${tripId}`);
+  };
+
   return (
     <div
       style={{
@@ -67,7 +73,10 @@ const Operations: FC = () => {
         handelClickSearch={handelClickSearch}
         primaryButton={{
           label: 'اضافه عمليه جديده',
-          onClick: () => navigate(`/steps/${id}`)
+          onClick: () => {
+            navigate(`/steps/${id}`);
+            setCalculatedData(null);
+          }
         }}
         isBack
       />
@@ -85,6 +94,7 @@ const Operations: FC = () => {
               <TripCard
                 numberTrip={operation.number_trip}
                 dateTrip={operation.dateTrip}
+                handelView={() => handelViewOperation(operation._id)}
               />
             );
           })

@@ -97,7 +97,6 @@ export type Trips = {
 };
 
 export type CreateTripParams = {
-  step: string;
   number_trip: string;
   user_id: string;
   owner_arrow: number;
@@ -118,6 +117,7 @@ export type DataTypeResponse = {
     users?: UserType[];
     auth?: boolean;
     trips?: Trips[];
+    trip?: Trips;
   };
   message: string;
   success: boolean;
