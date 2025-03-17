@@ -9,6 +9,9 @@ import { Divider, Button } from '@nextui-org/react';
 import { CalculatedT, NumberFormatter, TabsIdT } from '../InterFace/helper';
 import { useNavigate, useParams } from 'react-router';
 import NewLoader from '@/components/NewLoader';
+import { useGetTrip, useTrip } from '@/api/useAuth/useTrip';
+import { useSearchParams } from 'react-router-dom';
+// import { TaxesType } from '../Taxes/Taxes';
 
 const tabs = [
   {
@@ -104,11 +107,27 @@ const processedData = (val: CalculatedT) => [
     : [])
 ];
 
+// const retrievedData = localStorage?.getItem('taxesData');
+// const taxes: TaxesType = retrievedData && JSON.parse(retrievedData);
+
 const ProductPage = () => {
   const { calculatedData, setCalculatedData } = useCalculationStore();
+  const { mutate: addTrip, isPending } = useTrip();
   const navigate = useNavigate();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const tripId = searchParams.get('trip_id');
 
+  const { data, isFetching } = useGetTrip(
+    { user_id: id ?? '', trip_id: tripId ?? '' },
+    {
+      query: {
+        select: (s) => s.data.trip,
+        enabled: !!id && !!tripId, // Enable the query only if company_id is available
+        queryKey: ['getTrip']
+      }
+    }
+  );
   const [state, setState] = useState<TabsIdT>('all');
 
   useEffect(() => {
@@ -123,11 +142,42 @@ const ProductPage = () => {
     }
   }, [calculatedData, navigate]);
 
+  useEffect(() => {
+    setCalculatedData({
+      totalPriceKilo: 1200,
+      associationTaxes: 1200,
+      totalExpenses: 1200,
+      agentTaxes: 1200,
+      allShared: 1200,
+      shared: 1200,
+      fisherArrow: 1200,
+      otherArrow: 1200,
+      boatRateRent: 1200,
+      calculateNakhdah: 1200,
+      boatTaxes: 1200,
+      calculateCaptain: 1200,
+      allOwnerArrow: 1200,
+      numberTrip: '12',
+      dateTrip: '12',
+      typeFishing: [],
+      expenses: [],
+      rate_boat_price: 200,
+      owner_arrow: 200,
+      fisher_arrow: 200,
+      other_arrow: 200,
+      nakhdah: '12',
+      nakodah_arrows: '12',
+      captain: '12',
+      captain_arrows: '12'
+    });
+  }, [data]);
+
   // If calculatedData is null, show loader while waiting
-  if (calculatedData === null) {
+  if (calculatedData === null && !tripId) {
     return <NewLoader />;
   }
 
+  if (isPending || isFetching) return <NewLoader />;
   return (
     <div className="product-page">
       <header className="product-header">
@@ -146,37 +196,37 @@ const ProductPage = () => {
           />
         </Flex>
         <div className="product-grid">
-          {processedData(calculatedData).map(
-            (item, i) =>
-              (state === 'all' || item.type === state) && (
-                <>
-                  <div className="product-detail" key={i}>
-                    <strong>{item.label}:</strong> {item.value}
-                  </div>
+          {calculatedData &&
+            processedData(calculatedData)?.map(
+              (item, i) =>
+                (state === 'all' || item.type === state) && (
+                  <>
+                    <div className="product-detail" key={i}>
+                      <strong>{item.label}:</strong> {item.value}
+                    </div>
 
-                  {(state === 'expenses' || state === 'details') && (
-                    <>
-                      {item?.description?.map((des, i) => (
-                        <div className="product-detail" key={i}>
-                          {'bay' in des ? (
-                            // Render for ExpensesT
-                            <>
-                              <strong>{des.bay}:</strong> {des.value}
-                            </>
-                          ) : (
-                            // Render for FishingT
-                            <>
-                              <strong>{des.type}:</strong>
-                              {des.weight * des.price}
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </>
-              )
-          )}
+                    {(state === 'expenses' || state === 'details') && (
+                      <>
+                        {item?.description?.map((des, i) => (
+                          <div className="product-detail" key={i}>
+                            {'bay' in des ? (
+                              <>
+                                <strong>{des.bay}:</strong>
+                                {NumberFormatter(des.value)}
+                              </>
+                            ) : (
+                              <>
+                                <strong>{des.type}:</strong>
+                                {NumberFormatter(des.weight * des.price)}
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </>
+                )
+            )}
         </div>
         <Divider
           style={{
@@ -184,11 +234,12 @@ const ProductPage = () => {
           }}
         />
         <div className="product-grid">
-          {staticData(calculatedData).map((data, i) => (
-            <div className="product-detail" key={i}>
-              <strong>{data.label}:</strong> {NumberFormatter(+data.value)}
-            </div>
-          ))}
+          {calculatedData &&
+            staticData(calculatedData).map((data, i) => (
+              <div className="product-detail" key={i}>
+                <strong>{data.label}:</strong> {NumberFormatter(+data.value)}
+              </div>
+            ))}
         </div>
       </div>
       <Flex className="gap-2">
@@ -199,7 +250,29 @@ const ProductPage = () => {
           color="warning"
           variant="shadow"
           onClick={() => {
-            console.log('id', id);
+            if (id && calculatedData)
+              addTrip(
+                {
+                  number_trip: calculatedData?.numberTrip,
+                  user_id: id,
+                  owner_arrow: calculatedData?.owner_arrow,
+                  fisher_arrow: calculatedData?.fisher_arrow,
+                  other_arrow: calculatedData?.other_arrow ?? 0,
+                  dateTrip: calculatedData?.dateTrip,
+                  rate_boat_price: calculatedData?.rate_boat_price ?? 0,
+                  nakodah: calculatedData?.nakhdah ?? '',
+                  captain: calculatedData?.captain ?? '',
+                  nakodah_arrows: calculatedData?.nakodah_arrows ?? '',
+                  captain_arrows: calculatedData?.captain_arrows ?? '',
+                  expenses: calculatedData?.expenses,
+                  fishing: calculatedData?.typeFishing
+                },
+                {
+                  onSuccess: () => {
+                    navigate('/');
+                  }
+                }
+              );
           }}
         >
           حفظ

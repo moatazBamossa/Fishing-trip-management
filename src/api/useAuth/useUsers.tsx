@@ -24,7 +24,7 @@ export const getUsers = async (
   params: getUsersT
 ): Promise<DataTypeResponse> => {
   const res = await axios.get<DataTypeResponse>(
-    `https://alshrarh-team-1.onrender.com/users/${params.company_id}`
+    `http://localhost:5000/users/${params.company_id}`
   );
   return res.data; // This should return the data according to your DataTypeResponse
 };

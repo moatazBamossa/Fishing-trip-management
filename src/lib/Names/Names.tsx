@@ -52,6 +52,7 @@ const Names = () => {
       }
     }
   );
+
   const [filter, setFilter] = useState({
     isSearch: false,
     searching: users || [],
@@ -227,7 +228,7 @@ const Names = () => {
                   <Container
                     key={i}
                     title={user.name}
-                    number={0}
+                    number={user.tripCount}
                     id={user._id}
                     description={user.description}
                     handelEditName={(username, description) => {
