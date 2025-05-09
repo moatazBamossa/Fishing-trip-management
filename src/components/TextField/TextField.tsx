@@ -1,7 +1,7 @@
 import { FC, HTMLInputTypeAttribute } from 'react';
 import { Field, FieldRenderProps } from 'react-final-form';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+
+import TextInput from '../TextInput';
 
 type TextFieldProps = {
   name: string;
@@ -19,16 +19,13 @@ const TextField: FC<TextFieldProps> = (props): JSX.Element => {
   return (
     <Field name={name} parse={parse} validate={validate}>
       {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
-        <div className="grid w-full max-w-sm items-center gap-1.5">
-          {label && <Label htmlFor={name}>{label}</Label>}
-          <Input
-            style={{ textAlign: 'center' }}
-            id={name}
-            {...input}
-            type={type ?? 'text'}
-            {...rest}
-          />
-        </div>
+        <TextInput
+          label={label ?? ''}
+          type={type ?? 'text'}
+          id={input.name}
+          {...input}
+          {...rest}
+        />
       )}
     </Field>
   );
