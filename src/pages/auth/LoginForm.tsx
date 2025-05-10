@@ -4,20 +4,27 @@ import { useAuthStore } from '@/stores/auth.store';
 
 import { Form } from 'react-final-form';
 import { useNavigate } from 'react-router-dom';
+import ResetPasswordForm from './ResetPassword';
 
 type SubmitType = {
   email: string;
   password: string;
 };
 const LoginForm = () => {
-  const { login, isLoading } = useAuthStore();
+  const { login, isLoading, user, isAuthenticated } = useAuthStore();
 
   const navigate = useNavigate();
 
-  const onSubmit = async (values: SubmitType) => {
-    await login(values.email, values.password);
-    navigate('/dashboard');
+  const onSubmit = (values: SubmitType) => {
+    login(values.email, values.password);
   };
+
+  if (isAuthenticated && user?.isresetPassword) {
+    return <ResetPasswordForm />;
+  }
+  if (isAuthenticated && !user?.isresetPassword) {
+    navigate('/dashboard');
+  }
 
   return (
     <Form onSubmit={onSubmit}>
@@ -31,15 +38,6 @@ const LoginForm = () => {
           />
 
           <TextField type="password" label="password" name="password" />
-
-          {/* <div className="flex items-center justify-between">
-            <a
-              href="#"
-              className="text-sm font-medium text-blue-600 hover:text-blue-500 transition-colors"
-            >
-              Forgot password?
-            </a>
-          </div> */}
 
           <div>
             <button
