@@ -1,7 +1,8 @@
 import { lazy } from 'react';
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import AuthLayout from './components/Layout/AuthLayout';
 import MainLayout from './components/Layout/MainLayout';
+import ProtectedRoute from './components/Layout/ProtectedRoute';
 
 // import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -18,9 +19,7 @@ const Login = lazy(() => import('./pages/auth/Login'));
 // const LoginPage = () => <>LoginPage</>;
 // const DashboardLayout = () => <>DashboardLayout</>;
 const Dashboard = () => <>Dashboard</>;
-const Users = () => <>Users</>;
-const Settings = () => <>Settings</>;
-const NotFound = () => <>NotFound</>;
+
 // const Reports = () => <>Reports</>;
 // const AuditLogs = () => <>AuditLogs</>;
 // const Help = () => <>Help</>;
@@ -31,23 +30,26 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Auth routes */}
-        <Route element={<AuthLayout />}>
-          <Route path="/login" element={<Login />} />
-        </Route>
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
 
-        {/* Main routes with sidebar */}
-        <Route element={<MainLayout />}>
+        {/* Protected routes */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<div>Profile</div>} />
+          <Route path="/users" element={<div>users</div>} />
+          <Route path="/settings" element={<div>Settings</div>} />
         </Route>
 
-        {/* Redirect / to /dashboard */}
+        {/* Redirects */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-        {/* 404 page */}
-        <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<div>404 Not Found</div>} />
       </Routes>
     </BrowserRouter>
   );

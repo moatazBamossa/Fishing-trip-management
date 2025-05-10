@@ -2,7 +2,11 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type AuthState = {
-  user: number; // change this
+  user: {
+    name: string;
+    email: string;
+    isresetPassword: boolean;
+  } | null; // change this
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -13,7 +17,7 @@ type AuthState = {
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
-      user: 0,
+      user: null,
       token: null,
       isAuthenticated: false,
       isLoading: false,
@@ -24,7 +28,11 @@ export const useAuthStore = create<AuthState>()(
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
         const res = {
           json: async () => ({
-            user: 1, // Mock user ID
+            user: {
+              name: 'moataz',
+              email: 'm@gmail.com',
+              isresetPassword: true
+            }, // Mock user ID
             token: 'mock-token', // Mock token,
             isAuthenticated: true
           })
@@ -35,7 +43,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       logout: () => {
-        set({ user: 0, token: null, isAuthenticated: false });
+        set({ user: null, token: null, isAuthenticated: false });
       }
     }),
     {
