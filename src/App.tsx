@@ -1,58 +1,59 @@
-import { lazy } from 'react';
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import MainLayout from './components/Layout/MainLayout';
-import ProtectedRoute from './components/Layout/ProtectedRoute';
+import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+// Layouts
+import MainLayout from "./components/layouts/MainLayout";
+import AuthLayout from "./components/layouts/AuthLayout";
 
-// Lazy-loaded components
-const Login = lazy(() => import('./pages/auth/Login'));
-// const DashboardLayout = lazy(() => import('./layouts/DashboardLayout'));
-// const Dashboard = lazy(() => import('./pages/dashboard/Dashboard'));
-// const Users = lazy(() => import('./pages/users/Users'));
-// const Settings = lazy(() => import('./pages/settings/Settings'));
-// const Profile = lazy(() => import('./pages/profile/Profile'));
-// const Reports = lazy(() => import('./pages/reports/Reports'));
-// const AuditLogs = lazy(() => import('./pages/audit/AuditLogs'));
-// const Help = lazy(() => import('./pages/help/Help'));
-// const LoginPage = () => <>LoginPage</>;
-// const DashboardLayout = () => <>DashboardLayout</>;
-const Dashboard = () => <>Dashboard</>;
+// Pages
+import Dashboard from "./pages/Dashboard";
+import Users from "./pages/Users";
+import Settings from "./pages/Settings";
+import Login from "./pages/auth/Login";
+import NotFound from "./pages/NotFound";
 
-// const Reports = () => <>Reports</>;
-// const AuditLogs = () => <>AuditLogs</>;
-// const Help = () => <>Help</>;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes (adjust as needed)
+      refetchOnWindowFocus: false, // Disable automatic refetch on window focus
+      retry:2
+    },
+  },
+});
 
-// const queryClient = new QueryClient();
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public routes */}
-        <Route path="/login" element={<Login />} />
-
-        {/* Protected routes */}
-        <Route
-          element={
-            <ProtectedRoute>
-              <MainLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/profile" element={<div>Profile</div>} />
-          <Route path="/users" element={<div>users</div>} />
-          <Route path="/settings" element={<div>Settings</div>} />
-        </Route>
-
-        {/* Redirects */}
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        <Route path="*" element={<div>404 Not Found</div>} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          {/* Auth routes */}
+          <Route element={<AuthLayout />}>
+            <Route path="/login" element={<Login />} />
+          </Route>
+          
+          {/* Main routes with sidebar */}
+          <Route element={<MainLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/users" element={<Users />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          
+          {/* Redirect / to /dashboard */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          
+          {/* 404 page */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
