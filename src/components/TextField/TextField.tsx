@@ -1,7 +1,7 @@
 import { FC, HTMLInputTypeAttribute } from 'react';
 import { Field, FieldRenderProps } from 'react-final-form';
 
-import TextInput from '../TextInput';
+import TextInput from '@/components/TextInput';
 
 type TextFieldProps = {
   name: string;
