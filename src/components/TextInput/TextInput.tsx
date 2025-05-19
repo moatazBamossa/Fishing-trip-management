@@ -1,15 +1,15 @@
-import React, { useRef, useState } from 'react';
-import { Mail, Eye, EyeOff, Lock, Unlock } from 'lucide-react';
+import React, { useRef, useState } from 'react'
+import { Mail, Eye, EyeOff, Lock, Unlock } from 'lucide-react'
 
 interface TextInputProps {
-  label: string;
-  type: string;
-  id: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  error?: string;
-  required?: boolean;
+  label: string
+  type: string
+  id: string
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  placeholder?: string
+  error?: string
+  required?: boolean
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -20,27 +20,30 @@ const TextInput: React.FC<TextInputProps> = ({
   onChange,
   placeholder,
   error,
-  required = false
+  required = false,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
-  const [isIconAnimating, setIsIconAnimating] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+  const [isIconAnimating, setIsIconAnimating] = useState(false)
 
   const togglePasswordVisibility = () => {
-    setIsIconAnimating(true);
-    setShowPassword(!showPassword);
+    setIsIconAnimating(true)
+    setShowPassword(!showPassword)
 
     // Refocus the input after toggling
     if (inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus()
     }
-  };
+  }
 
   return (
     <div className="space-y-1">
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700">
+      <label
+        htmlFor={id}
+        className="block text-sm font-medium text-gray-700"
+      >
         {label}
       </label>
       <div className="relative rounded-lg shadow-sm">
@@ -59,9 +62,7 @@ const TextInput: React.FC<TextInputProps> = ({
           )}
         </div>
         <input
-          type={
-            type === 'password' ? (showPassword ? 'text' : 'password') : type
-          }
+          type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
           id={id}
           name={id}
           value={value}
@@ -71,11 +72,7 @@ const TextInput: React.FC<TextInputProps> = ({
           required={required}
           placeholder={placeholder}
           className={`block w-full pl-10 pr-3 py-3 border ${
-            error
-              ? 'border-red-300'
-              : isFocused
-              ? 'border-blue-500'
-              : 'border-gray-300'
+            error ? 'border-red-300' : isFocused ? 'border-blue-500' : 'border-gray-300'
           } 
             rounded-lg focus:outline-none focus:ring-2 ${
               error ? 'focus:ring-red-500' : 'focus:ring-blue-500'
@@ -109,11 +106,9 @@ const TextInput: React.FC<TextInputProps> = ({
           </div>
         )}
       </div>
-      {error && (
-        <p className="text-sm text-red-600 mt-1 animate-fadeIn">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-600 mt-1 animate-fadeIn">{error}</p>}
     </div>
-  );
-};
+  )
+}
 
-export default TextInput;
+export default TextInput
