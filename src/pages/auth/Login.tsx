@@ -1,5 +1,5 @@
-import React from 'react';
-import LoginForm from './LoginForm';
+import React from 'react'
+import LoginForm from './LoginForm'
 
 // import Logo from '../../assets/react.svg';
 
@@ -12,12 +12,8 @@ const LoginPage: React.FC = () => {
             <div className="flex flex-col items-center mb-8">
               {/* <Logo /> */}
               <div>LOGO</div>
-              <h1 className="mt-6 text-2xl font-semibold text-gray-900">
-                Welcome to iMazing
-              </h1>
-              <p className="mt-2 text-center text-gray-600">
-                Sign in to manage your Apple devices
-              </p>
+              <h1 className="mt-6 text-2xl font-semibold text-gray-900">Welcome to iMazing</h1>
+              <p className="mt-2 text-center text-gray-600">Sign in to manage your Apple devices</p>
             </div>
 
             <LoginForm />
@@ -29,7 +25,7 @@ const LoginPage: React.FC = () => {
         </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage
