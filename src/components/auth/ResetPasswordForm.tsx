@@ -1,54 +1,53 @@
-
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
 
 const ResetPasswordForm = () => {
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
+  const navigate = useNavigate()
 
   const handleResetPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+    e.preventDefault()
+
     if (newPassword !== confirmPassword) {
       toast({
         title: "Passwords don't match",
-        description: "Please ensure your new password and confirmation match.",
-        variant: "destructive"
-      });
-      return;
+        description: 'Please ensure your new password and confirmation match.',
+        variant: 'destructive',
+      })
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     // Simulate password validation and reset
     // In a real app, this would call an API
     setTimeout(() => {
       // Success simulation
       toast({
-        title: "Password reset successful",
+        title: 'Password reset successful',
         description: "Your password has been updated. You'll now be redirected to the dashboard.",
-      });
-      
-      setIsSubmitting(false);
-      navigate("/dashboard");
-    }, 1500);
-  };
+      })
+
+      setIsSubmitting(false)
+      navigate('/dashboard')
+    }, 1500)
+  }
 
   return (
     <Card className="w-full">
@@ -59,7 +58,10 @@ const ResetPasswordForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleResetPassword} className="space-y-4">
+        <form
+          onSubmit={handleResetPassword}
+          className="space-y-4"
+        >
           <div className="space-y-2">
             <Label htmlFor="oldPassword">Current Password</Label>
             <Input
@@ -93,19 +95,19 @@ const ResetPasswordForm = () => {
               placeholder="Confirm your new password"
             />
           </div>
-          <Button 
-            type="submit" 
-            className="w-full" 
+          <Button
+            type="submit"
+            className="w-full"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Processing..." : "Reset Password"}
+            {isSubmitting ? 'Processing...' : 'Reset Password'}
           </Button>
         </form>
       </CardContent>
       <CardFooter className="flex justify-center">
-        <Button 
-          variant="link" 
-          onClick={() => navigate("/dashboard")} 
+        <Button
+          variant="link"
+          onClick={() => navigate('/dashboard')}
           type="button"
           disabled={isSubmitting}
         >
@@ -113,7 +115,7 @@ const ResetPasswordForm = () => {
         </Button>
       </CardFooter>
     </Card>
-  );
-};
+  )
+}
 
-export default ResetPasswordForm;
+export default ResetPasswordForm

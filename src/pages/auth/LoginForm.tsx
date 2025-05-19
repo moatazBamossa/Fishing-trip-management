@@ -1,35 +1,46 @@
-import TextField from '@/components/TextField';
+import TextField from '@/components/TextField'
 
-import { useAuthStore } from '@/stores/auth.store';
+import { useAuthStore } from '@/stores/auth.store'
 
-import { Form } from 'react-final-form';
-import { useNavigate } from 'react-router-dom';
-import ResetPasswordForm from './ResetPassword';
+import { Form } from 'react-final-form'
+import { useNavigate } from 'react-router-dom'
+import ResetPasswordForm from './ResetPassword'
+import { useToast } from '@/hooks/use-toast'
 
 type SubmitType = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
 const LoginForm = () => {
-  const { login, isLoading, user, isAuthenticated } = useAuthStore();
+  const { toast } = useToast()
+  const { login, isLoading, user, isAuthenticated } = useAuthStore()
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const onSubmit = (values: SubmitType) => {
-    login(values.email, values.password);
-  };
-
-  if (isAuthenticated && user?.isresetPassword) {
-    return <ResetPasswordForm />;
+    login(values.email, values.password)
   }
-  if (isAuthenticated && !user?.isresetPassword) {
-    navigate('/dashboard');
+
+  if (isAuthenticated && user?.reset_required) {
+    return <ResetPasswordForm />
+  }
+  if (isAuthenticated && !user?.reset_required) {
+    toast({
+      title: 'log in successfully',
+      description: 'You are logged in',
+      variant: 'default',
+    })
+    navigate('/dashboard')
   }
 
   return (
     <Form onSubmit={onSubmit}>
       {({ handleSubmit }): JSX.Element => (
-        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+          noValidate
+        >
           <TextField
             label="Email"
             type="email"
@@ -37,7 +48,11 @@ const LoginForm = () => {
             placeholder="your.name@example.com"
           />
 
-          <TextField type="password" label="password" name="password" />
+          <TextField
+            type="password"
+            label="password"
+            name="password"
+          />
 
           <div>
             <button
@@ -77,7 +92,7 @@ const LoginForm = () => {
         </form>
       )}
     </Form>
-  );
-};
+  )
+}
 
-export default LoginForm;
+export default LoginForm

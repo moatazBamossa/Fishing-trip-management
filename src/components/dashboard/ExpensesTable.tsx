@@ -1,20 +1,26 @@
-
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Edit, Trash } from "lucide-react";
+import { Button } from '@/components/ui/button'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+import { Edit, Trash } from 'lucide-react'
 
 // Define types for our data
 export interface Expense {
-  id: number;
-  tripId: number;
-  description: string;
-  amount: number;
-  date: string;
-  category: string;
+  id: number
+  tripId: number
+  description: string
+  amount: number
+  date: string
+  category: string
 }
 
 interface ExpensesTableProps {
-  expenses: Expense[];
+  expenses: Expense[]
 }
 
 const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
@@ -33,7 +39,10 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
       </TableHeader>
       <TableBody>
         {expenses.map((expense) => (
-          <TableRow key={expense.id} className="animate-slide-in">
+          <TableRow
+            key={expense.id}
+            className="animate-slide-in"
+          >
             <TableCell>{expense.id}</TableCell>
             <TableCell>{expense.tripId}</TableCell>
             <TableCell>{expense.description}</TableCell>
@@ -41,10 +50,16 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
             <TableCell>{expense.date}</TableCell>
             <TableCell>${expense.amount.toFixed(2)}</TableCell>
             <TableCell className="text-right">
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+              >
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon">
+              <Button
+                variant="ghost"
+                size="icon"
+              >
                 <Trash className="h-4 w-4 text-destructive" />
               </Button>
             </TableCell>
@@ -52,7 +67,7 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
         ))}
       </TableBody>
     </Table>
-  );
-};
+  )
+}
 
-export default ExpensesTable;
+export default ExpensesTable

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
 import {
   Card,
@@ -6,49 +6,73 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
-import { Form } from 'react-final-form';
+  CardTitle,
+} from '@/components/ui/card'
+import { useToast } from '@/hooks/use-toast'
+import { useNavigate } from 'react-router-dom'
+import { Form } from 'react-final-form'
 
-import TextField from '@/components/TextField';
+import TextField from '@/components/TextField'
+import { useChangePassword } from '@/api/useSession'
 
 const ResetPasswordForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { toast } = useToast()
+  const navigate = useNavigate()
+
+  const { mutate: changePassword } = useChangePassword({
+    mutation: {
+      onSuccess: () => {
+        toast({
+          title: 'Password reset successful',
+          description: "Your password has been updated. You'll now be redirected to the dashboard.",
+        })
+        setIsSubmitting(false)
+        navigate('/dashboard')
+      },
+
+      onError: (error) => {
+        toast({
+          title: 'Error',
+          description: error?.response?.data?.error || 'An error occurred.',
+          variant: 'destructive',
+        })
+        setIsSubmitting(false)
+      },
+    },
+  })
 
   const handleResetPassword = async (values: {
-    oldPassword: string;
-    newPassword: string;
-    confirmPassword: string;
+    oldPassword: string
+    newPassword: string
+    confirmPassword: string
   }) => {
     if (values.newPassword !== values.confirmPassword) {
       toast({
         title: "Passwords don't match",
         description: 'Please ensure your new password and confirmation match.',
-        variant: 'destructive'
-      });
-      return;
+        variant: 'destructive',
+      })
+      return
     }
 
-    setIsSubmitting(true);
-
-    // Simulate password validation and reset
-    // In a real app, this would call an API
-    setTimeout(() => {
-      // Success simulation
+    setIsSubmitting(true)
+    try {
+      await changePassword({
+        old_password: values.oldPassword,
+        password: values.newPassword,
+        password_confirmation: values.confirmPassword,
+      })
+    } catch (error) {
       toast({
-        title: 'Password reset successful',
-        description:
-          "Your password has been updated. You'll now be redirected to the dashboard."
-      });
-
-      setIsSubmitting(false);
-      navigate('/dashboard');
-    }, 1500);
-  };
+        title: 'Error',
+        description: error?.response?.data?.error || 'An error occurred.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
 
   return (
     <Card className="w-full">
@@ -61,7 +85,10 @@ const ResetPasswordForm = () => {
       <CardContent>
         <Form onSubmit={handleResetPassword}>
           {({ handleSubmit }) => (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form
+              onSubmit={handleSubmit}
+              className="space-y-4"
+            >
               <TextField
                 label="oldPassword"
                 name="oldPassword"
@@ -101,7 +128,7 @@ const ResetPasswordForm = () => {
         </button>
       </CardFooter>
     </Card>
-  );
-};
+  )
+}
 
-export default ResetPasswordForm;
+export default ResetPasswordForm

@@ -1,5 +1,4 @@
-import React from 'react';
-
+import React from 'react'
 
 const NotFound: React.FC = () => {
   return (
@@ -11,7 +10,7 @@ const NotFound: React.FC = () => {
         <div className="wave"></div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default NotFound;
+export default NotFound

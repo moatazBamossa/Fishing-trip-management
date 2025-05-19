@@ -1,18 +1,16 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { login, UserType } from '@/api/useSession'
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+import { toast } from '@/components/ui/use-toast'
 
 type AuthState = {
-  user: {
-    name: string;
-    email: string;
-    isresetPassword: boolean;
-  } | null; // change this
-  token: string | null;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-};
+  user: UserType | null // change this
+  token: string | null
+  isAuthenticated: boolean
+  isLoading: boolean
+  login: (email: string, password: string) => Promise<void>
+  logout: () => void
+}
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -23,32 +21,40 @@ export const useAuthStore = create<AuthState>()(
       isLoading: false,
 
       login: async (email, password) => {
-        console.log('first', email, password);
-        set({ isLoading: true });
-        // await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate delay
-        // const res = {
-        //   json: async () => ({
-        //     user: {
-        //       name: 'moataz',
-        //       email: 'm@gmail.com',
-        //       isresetPassword: true
-        //     }, // Mock user ID
-        //     token: 'mock-token', // Mock token,
-        //     isAuthenticated: true
-        //   })
-        // };
-        // const { user, token, isAuthenticated } = await res.json();
-
-        // set({ user, token, isAuthenticated, isLoading: false });
+        set({ isLoading: true })
+        try {
+          const res = await login({ email, password })
+          toast({
+            title: 'Login successfully',
+            description: 'login successfully',
+          })
+          const { token, user } = res
+          set({ user, token, isAuthenticated: !!user.id, isLoading: false })
+          localStorage.setItem('token', token)
+        } catch (error) {
+          console.log('error', error)
+          toast({
+            title: 'Login Failed',
+            description: error?.response?.data?.error || 'Invalid credentials.',
+            variant: 'destructive',
+          })
+          set({ isLoading: false })
+        }
       },
 
       logout: () => {
-        set({ user: null, token: null, isAuthenticated: false });
-      }
+        set({ user: null, token: null, isAuthenticated: false })
+        localStorage.removeItem('token')
+        toast({
+          title: 'Logout successfully',
+          description: 'You have been logged out.',
+          variant: 'default',
+        })
+      },
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ token: state.token })
-    }
-  )
-);
+      partialize: (state) => ({ token: state.token }),
+    },
+  ),
+)
