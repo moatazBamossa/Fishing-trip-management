@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react'
-import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useState } from 'react'
+import { Navigate, Outlet } from 'react-router-dom'
 import Sidebar from '../navigation/Sidebar'
 import Navbar from '../navigation/Navbar'
 import { cn } from '@/lib/utils'
 import { useIsMobile } from '@/hooks/use-mobile'
-import { Drawer, DrawerContent, DrawerTrigger } from '@/components/ui/drawer'
+import { Drawer, DrawerContent } from '@/components/ui/drawer'
 import { useAuthStore } from '@/stores/auth.store'
 
 const MainLayout = () => {
-  const { isAuthenticated } = useAuthStore()
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const location = useLocation()
   const isMobile = useIsMobile()
 
-  if (!isAuthenticated) {
+  const isAuthentication = localStorage.getItem('token')
+
+  if (!isAuthentication) {
     return (
       <Navigate
         to="/login"
