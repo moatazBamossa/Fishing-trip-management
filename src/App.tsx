@@ -3,6 +3,7 @@ import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // Layouts
 import MainLayout from './components/layouts/MainLayout'
@@ -83,6 +84,7 @@ const App = () => (
           />
         </Routes>
       </BrowserRouter>
+      <ReactQueryDevtools initialIsOpen={false} />
     </TooltipProvider>
   </QueryClientProvider>
 )

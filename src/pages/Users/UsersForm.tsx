@@ -11,29 +11,49 @@ import TextField from '@/components/TextField'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { required } from '@/lib/utils'
-
-export type UserT = {
-  email: string
-  password: string
-  full_name: string
-  phone: string
-  address: string
-  role: 'admin' | 'user'
-  id_card_number: string
-}
+import { UserT, UserType } from '@/api/Users/useUsers.type'
+import { getAllUsersQueryKey, useCreateUser, useUpdateUser } from '@/api/Users/useUsers'
+import { useQueryClient } from '@tanstack/react-query'
+import LoadingSVG from '@/components/ui/LoadingSVG'
 
 type UsersFormProps = {
-  initialValue: UserT | null
+  initialValue: UserType | null
   handelCloseDialog: () => void
+  organizationId?: number
 }
 
 const UsersForm = (props: UsersFormProps) => {
-  const { initialValue } = props
+  const { initialValue, organizationId } = props
+  const queryClient = useQueryClient()
+
+  const textBTN = initialValue?.full_name ? 'Update' : 'Add'
+
+  const { mutate: createUser, isPending } = useCreateUser(organizationId)
+  const { mutate: updateUser, isPending: pending } = useUpdateUser(organizationId)
+
+  const handelSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey(organizationId) })
+    props.handelCloseDialog()
+  }
   return (
     <Form
       initialValues={initialValue}
-      onSubmit={() => {
-        //
+      onSubmit={(values: UserT) => {
+        if (initialValue?.id) {
+          updateUser(
+            {
+              ...initialValue,
+              ...values,
+            },
+            {
+              onSuccess: handelSuccess,
+            },
+          )
+          return
+        }
+        createUser(values, {
+          onSuccess: handelSuccess,
+        })
       }}
     >
       {({ handleSubmit, valid, dirty }): JSX.Element => (
@@ -118,18 +138,17 @@ const UsersForm = (props: UsersFormProps) => {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
-                disabled={!dirty || !valid}
+                disabled={!dirty || !valid || isPending}
                 onClick={handleSubmit}
               >
-                {/* {isPending || pending ? (
+                {isPending ? (
                   <>
                     <LoadingSVG />
                     {`${textBTN}ing...`}
                   </>
                 ) : (
                   textBTN
-                )} */}
-                add user
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
