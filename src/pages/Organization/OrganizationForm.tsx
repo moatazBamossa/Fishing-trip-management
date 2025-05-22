@@ -22,6 +22,7 @@ type OrganizationFormProps = {
   initialValue: OrganizationType | null
   handelCloseDialog: () => void
 }
+
 const OrganizationForm = (props: OrganizationFormProps) => {
   const { initialValue } = props
 
