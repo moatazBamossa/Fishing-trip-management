@@ -11,7 +11,7 @@ import AuthLayout from './components/layouts/AuthLayout'
 // Pages
 import Organization from './pages/Organization'
 import Dashboard from './pages/Dashboard'
-import Users from './pages/Users'
+import Users from './pages/Users/Users'
 import Settings from './pages/Settings'
 import Login from './pages/auth/Login'
 import NotFound from './pages/NotFound'
@@ -46,6 +46,10 @@ const App = () => (
             <Route
               path="/organization"
               element={<Organization />}
+            />
+            <Route
+              path="/organization/:id/users"
+              element={<Users />}
             />
             <Route
               path="/dashboard"

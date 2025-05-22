@@ -8,7 +8,7 @@ interface TextInputProps {
   value: string
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   placeholder?: string
-  error?: string
+  error?: string | boolean
   required?: boolean
 }
 
@@ -22,6 +22,7 @@ const TextInput: React.FC<TextInputProps> = ({
   error,
   required = false,
 }) => {
+  console.log('error', error)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [showPassword, setShowPassword] = useState(false)

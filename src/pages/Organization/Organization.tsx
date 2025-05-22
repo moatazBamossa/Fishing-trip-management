@@ -30,6 +30,7 @@ import OrganizationForm from './OrganizationForm'
 import { OrganizationSkeleton } from './OrganizationSkeleton'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
+import { useNavigate } from 'react-router-dom'
 
 interface User {
   id: number
@@ -48,9 +49,7 @@ const Organization = () => {
       select: (response) => response.data.organizations,
     },
   })
-
-  const [users, setUsers] = useState<OrganizationType[]>(orgNames)
-
+  const navigate = useNavigate()
   const [showAddDialog, setShowDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [userId, setUserId] = useState<{
@@ -58,19 +57,19 @@ const Organization = () => {
     name: string
   }>()
 
-  const [user, setUser] = useState<OrganizationType | null>(null)
+  const [organization, setOrganization] = useState<OrganizationType | null>(null)
 
   const { mutate: deleteOrganization, isPending: pending } = useDeleteOrganization()
 
   const { toast } = useToast()
   const queryClient = useQueryClient()
   // Open edit dialog
-  const handleEditClick = (user) => {
-    setUser(user)
+  const handleEditClick = (organization) => {
+    setOrganization(organization)
     setShowDialog(true)
   }
   const handelCloseDialog = () => {
-    setUser(null)
+    setOrganization(null)
     setShowDialog(false)
   }
 
@@ -83,7 +82,7 @@ const Organization = () => {
     })
   }
 
-  // Delete user
+  // Delete organization
   const handleDeleteUser = () => {
     if (!userId) return
     deleteOrganization(userId.id, {
@@ -127,22 +126,24 @@ const Organization = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orgNames?.map((user) => (
+            {orgNames?.map((organization) => (
               <TableRow
-                key={user.id}
+                key={organization.id}
                 className="animate-fade-in"
-                onClick={() => console.log(user)}
+                onClick={() => {
+                  navigate(`/organization/${organization.id}/users`)
+                }}
               >
-                <TableCell>{user.id}</TableCell>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user?.address ?? '--'}</TableCell>
-                <TableCell>{user.phone ?? '--'}</TableCell>
+                <TableCell>{organization.id}</TableCell>
+                <TableCell>{organization.name}</TableCell>
+                <TableCell>{organization.email}</TableCell>
+                <TableCell>{organization?.address ?? '--'}</TableCell>
+                <TableCell>{organization.phone ?? '--'}</TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleEditClick(user)}
+                    onClick={() => handleEditClick(organization)}
                     className="hover:bg-gray-100"
                   >
                     <Edit className="h-4 w-4" />
@@ -152,8 +153,8 @@ const Organization = () => {
                     size="sm"
                     onClick={() =>
                       handleDeleteClick({
-                        id: user.id,
-                        name: user.name,
+                        id: organization.id,
+                        name: organization.name,
                       })
                     }
                     className="hover:bg-gray-100"
@@ -176,7 +177,7 @@ const Organization = () => {
       >
         <OrganizationForm
           handelCloseDialog={handelCloseDialog}
-          initialValue={user}
+          initialValue={organization}
         />
       </Dialog>
 
