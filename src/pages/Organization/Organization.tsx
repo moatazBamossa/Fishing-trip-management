@@ -27,10 +27,10 @@ import {
 import { OrganizationType } from '@/api/Organiztion/useOrganiztion.type'
 
 import OrganizationForm from './OrganizationForm'
-import { OrganizationSkeleton } from './OrganizationSkeleton'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
 import { useNavigate } from 'react-router-dom'
+import UserTableSkeleton from '@/components/ui/UserTableSkeleton'
 
 interface User {
   id: number
@@ -40,6 +40,8 @@ interface User {
 }
 
 const Organization = () => {
+  const navigate = useNavigate()
+
   const {
     data: orgNames,
     isLoading,
@@ -49,7 +51,8 @@ const Organization = () => {
       select: (response) => response.data.organizations,
     },
   })
-  const navigate = useNavigate()
+  const { mutate: deleteOrganization, isPending: pending } = useDeleteOrganization()
+
   const [showAddDialog, setShowDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [userId, setUserId] = useState<{
@@ -58,8 +61,6 @@ const Organization = () => {
   }>()
 
   const [organization, setOrganization] = useState<OrganizationType | null>(null)
-
-  const { mutate: deleteOrganization, isPending: pending } = useDeleteOrganization()
 
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -96,9 +97,6 @@ const Organization = () => {
       },
     })
   }
-  if (isLoading || isFetching) {
-    return <OrganizationSkeleton />
-  }
 
   return (
     <div className="space-y-6">
@@ -126,44 +124,53 @@ const Organization = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orgNames?.map((organization) => (
-              <TableRow
-                key={organization.id}
-                className="animate-fade-in"
-                onClick={() => {
-                  navigate(`/organization/${organization.id}/users`)
-                }}
-              >
-                <TableCell>{organization.id}</TableCell>
-                <TableCell>{organization.name}</TableCell>
-                <TableCell>{organization.email}</TableCell>
-                <TableCell>{organization?.address ?? '--'}</TableCell>
-                <TableCell>{organization.phone ?? '--'}</TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditClick(organization)}
-                    className="hover:bg-gray-100"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      handleDeleteClick({
-                        id: organization.id,
-                        name: organization.name,
-                      })
-                    }
-                    className="hover:bg-gray-100"
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isFetching || isLoading ? (
+              <UserTableSkeleton rowCount={3} />
+            ) : (
+              orgNames?.map((organization) => (
+                <TableRow
+                  key={organization.id}
+                  className="animate-fade-in hover:bg-gray-50"
+                  onClick={() => {
+                    navigate(`/organization/${organization.id}/users`)
+                  }}
+                >
+                  <TableCell>{organization.id}</TableCell>
+                  <TableCell>{organization.name}</TableCell>
+                  <TableCell>{organization.email}</TableCell>
+                  <TableCell>{organization?.address ?? '--'}</TableCell>
+                  <TableCell>{organization.phone ?? '--'}</TableCell>
+                  <TableCell className="text-right space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleEditClick(organization)
+                      }}
+                      className="hover:bg-gray-100"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+
+                        handleDeleteClick({
+                          id: organization.id,
+                          name: organization.name,
+                        })
+                      }}
+                      className="hover:bg-gray-100"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
