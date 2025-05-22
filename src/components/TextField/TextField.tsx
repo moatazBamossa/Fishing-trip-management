@@ -12,6 +12,7 @@ type TextFieldProps = {
   validate?: (_: unknown, values: unknown) => string | undefined
   parse?: <V, R>(value: V, name: string) => R
   type?: HTMLInputTypeAttribute
+  required?: boolean
 }
 
 const TextField: FC<TextFieldProps> = (props): JSX.Element => {
@@ -22,8 +23,9 @@ const TextField: FC<TextFieldProps> = (props): JSX.Element => {
       parse={parse}
       validate={validate}
     >
-      {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
+      {({ input, meta }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
         <TextInput
+          error={meta.error}
           label={label ?? ''}
           type={type ?? 'text'}
           id={input.name}
