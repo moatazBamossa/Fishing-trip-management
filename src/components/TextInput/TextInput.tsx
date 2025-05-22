@@ -22,7 +22,6 @@ const TextInput: React.FC<TextInputProps> = ({
   error,
   required = false,
 }) => {
-  console.log('error', error)
   const inputRef = useRef<HTMLInputElement>(null)
 
   const [showPassword, setShowPassword] = useState(false)

@@ -17,22 +17,37 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+
 import { UserPlus, Edit, Trash2, ArrowBigLeft } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
-import UsersForm, { UserT } from './UsersForm'
+import UsersForm from './UsersForm'
+import { UserType } from '@/api/Users/useUsers.type'
+import { getAllUsersQueryKey, useDeleteUser, useGetUsers } from '@/api/Users/useUsers'
+import UserTableSkeleton from '../../components/ui/UserTableSkeleton'
+import { useQueryClient } from '@tanstack/react-query'
 
 const Users = () => {
   const { id } = useParams<{ id: string }>()
-  const [users, setUsers] = useState<UserT[]>()
+  const queryClient = useQueryClient()
 
+  const {
+    data: users,
+    isLoading,
+    isFetching,
+  } = useGetUsers(+id, {
+    query: {
+      select: (response) => response.data.users,
+      enabled: !!+id,
+    },
+  })
+
+  const { mutate: deleteUser, isPending: pending } = useDeleteUser(+id)
   const [showDialog, setShowDialog] = useState(false)
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<UserT | null>(null)
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
 
   const navigate = useNavigate()
 
@@ -41,6 +56,12 @@ const Users = () => {
   // Open edit dialog
   const handleEditClick = (user) => {
     setSelectedUser(user)
+    setShowDialog(true)
+  }
+
+  const handelCloseDialog = () => {
+    setSelectedUser(null)
+    setShowDialog(false)
   }
 
   // Open delete dialog
@@ -53,11 +74,16 @@ const Users = () => {
   const handleDeleteUser = () => {
     if (!selectedUser) return
 
-    setShowDeleteDialog(false)
-
-    toast({
-      title: 'User deleted',
-      description: `${selectedUser?.full_name} has been removed.`,
+    deleteUser(selectedUser.id, {
+      onSuccess: () => {
+        toast({
+          title: 'User deleted',
+          description: `${selectedUser.full_name} has been removed.`,
+          variant: 'destructive',
+        })
+        setShowDeleteDialog(false)
+        queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey(+id) })
+      },
     })
   }
 
@@ -89,41 +115,46 @@ const Users = () => {
               <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead>Number</TableHead>
               <TableHead>Role</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users?.map((user) => (
-              <TableRow
-                key={user.id_card_number}
-                className="animate-fade-in"
-              >
-                <TableCell>{user.id_card_number}</TableCell>
-                <TableCell>{user.full_name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.phone}</TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell className="text-right space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEditClick(user)}
-                    className="hover:bg-gray-100"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleDeleteClick(user)}
-                    className="hover:bg-gray-100"
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isLoading || isFetching ? (
+              <UserTableSkeleton rowCount={3} />
+            ) : (
+              users?.map((user) => (
+                <TableRow
+                  key={user.id_card_number}
+                  className="animate-fade-in"
+                >
+                  <TableCell>{user.id_card_number}</TableCell>
+                  <TableCell>{user.full_name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.phone}</TableCell>
+                  <TableCell>{user.role}</TableCell>
+                  <TableCell className="text-right space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEditClick(user)}
+                      className="hover:bg-gray-100"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleDeleteClick(user)}
+                      className="hover:bg-gray-100"
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
@@ -131,13 +162,15 @@ const Users = () => {
       {/* Add User Dialog */}
       <Dialog
         open={showDialog}
-        onOpenChange={setShowDialog}
+        onOpenChange={(open) => {
+          setShowDialog(open)
+          if (!open) handelCloseDialog()
+        }}
       >
         <UsersForm
-          handelCloseDialog={() => {
-            //
-          }}
+          handelCloseDialog={handelCloseDialog}
           initialValue={selectedUser}
+          organizationId={+id}
         />
       </Dialog>
 
@@ -160,6 +193,7 @@ const Users = () => {
             <Button
               onClick={handleDeleteUser}
               variant="destructive"
+              disabled={pending}
             >
               Delete User
             </Button>
