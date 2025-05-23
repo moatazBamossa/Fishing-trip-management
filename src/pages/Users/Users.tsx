@@ -24,7 +24,11 @@ import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import UsersForm from './UsersForm'
 import { UserType } from '@/api/OrgUsers/useOrgUsers.type'
-import { getAllUsersQueryKey, useDeleteUser, useGetUsers } from '@/api/OrgUsers/useOrgUsers'
+import {
+  getAllOrgUsersQueryKey,
+  useDeleteOrgUser,
+  useGetOrgUsers,
+} from '@/api/OrgUsers/useOrgUsers'
 import UserTableSkeleton from '../../components/ui/UserTableSkeleton'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -36,14 +40,14 @@ const Users = () => {
     data: users,
     isLoading,
     isFetching,
-  } = useGetUsers(+id, {
+  } = useGetOrgUsers(+id, {
     query: {
       select: (response) => response.data.users,
       enabled: !!+id,
     },
   })
 
-  const { mutate: deleteUser, isPending: pending } = useDeleteUser(+id)
+  const { mutate: deleteUser, isPending: pending } = useDeleteOrgUser(+id)
   const [showDialog, setShowDialog] = useState(false)
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -82,7 +86,7 @@ const Users = () => {
           variant: 'destructive',
         })
         setShowDeleteDialog(false)
-        queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey(+id) })
+        queryClient.invalidateQueries({ queryKey: getAllOrgUsersQueryKey(+id) })
       },
     })
   }
