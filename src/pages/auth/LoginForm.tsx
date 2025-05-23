@@ -4,9 +4,9 @@ import { useAuthStore } from '@/stores/auth.store'
 
 import { Form } from 'react-final-form'
 import { useNavigate } from 'react-router-dom'
-import ResetPasswordForm from './ResetPassword'
 import { useToast } from '@/hooks/use-toast'
 import LoadingSVG from '@/components/ui/LoadingSVG'
+import { useEffect } from 'react'
 
 type SubmitType = {
   email: string
@@ -14,6 +14,7 @@ type SubmitType = {
 }
 const LoginForm = () => {
   const { toast } = useToast()
+
   const { login, isLoading, user, isAuthenticated } = useAuthStore()
 
   const navigate = useNavigate()
@@ -22,16 +23,19 @@ const LoginForm = () => {
     login(values.email, values.password)
   }
 
+  useEffect(() => {
+    if (isAuthenticated && !user?.reset_required) {
+      window.location.href = '/dashboard'
+      toast({
+        title: 'Log in successfully',
+        description: 'You are logged in',
+        variant: 'default',
+      })
+    }
+  }, [isAuthenticated, user, navigate, toast])
+
   if (isAuthenticated && user?.reset_required) {
-    return <ResetPasswordForm />
-  }
-  if (isAuthenticated && !user?.reset_required) {
-    toast({
-      title: 'log in successfully',
-      description: 'You are logged in',
-      variant: 'default',
-    })
-    navigate('/dashboard')
+    return (window.location.href = '/password')
   }
 
   return (

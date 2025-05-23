@@ -2,6 +2,7 @@ import { login, UserType } from '@/api/useSession'
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { toast } from '@/components/ui/use-toast'
+import { saveUserSecureData } from '@/lib/utils'
 
 type AuthState = {
   user: UserType | null // change this
@@ -54,7 +55,15 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      partialize: (state) => ({ token: state.token }),
+      partialize: (state) =>
+        saveUserSecureData(
+          {
+            token: state.token,
+            isAdmin: state?.user.is_admin ?? false,
+            isSuperAdmin: state?.user?.role === 'super_admin',
+          },
+          'secureUserData',
+        ),
     },
   ),
 )
