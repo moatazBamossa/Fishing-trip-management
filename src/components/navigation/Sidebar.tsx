@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { cn } from '@/lib/utils'
+import { cn, getUserSecureData } from '@/lib/utils'
 import { Home, LayoutDashboard, Users, Settings, ChevronRight, ChevronLeft } from 'lucide-react'
 
 interface SidebarProps {
@@ -54,7 +54,16 @@ const NavItem = ({
   )
 }
 
+const sidebarItems = ({ isAdmin, isSuperAdmin }) =>
+  [
+    isSuperAdmin && { to: '/organization', icon: Home, label: 'Organization' },
+    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    isAdmin && { to: '/users', icon: Users, label: 'Users' },
+    { to: '/settings', icon: Settings, label: 'Settings' },
+  ].filter(Boolean)
 const Sidebar = ({ collapsed }: SidebarProps) => {
+  const { isAdmin, isSuperAdmin } = getUserSecureData('secureUserData')
+
   return (
     <aside
       className={cn(
@@ -76,30 +85,18 @@ const Sidebar = ({ collapsed }: SidebarProps) => {
 
       <nav className="flex-1 py-4 px-2 overflow-y-auto">
         <div className="space-y-1 animate-fade-in">
-          <NavItem
-            to="/organization"
-            icon={Home}
-            label="Organization"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/dashboard"
-            icon={LayoutDashboard}
-            label="Dashboard"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/users"
-            icon={Users}
-            label="Users"
-            collapsed={collapsed}
-          />
-          <NavItem
-            to="/settings"
-            icon={Settings}
-            label="Settings"
-            collapsed={collapsed}
-          />
+          {sidebarItems({
+            isAdmin: isAdmin || false,
+            isSuperAdmin: isSuperAdmin || false,
+          }).map((item) => (
+            <NavItem
+              key={item.to}
+              to={item.to}
+              icon={item.icon}
+              label={item.label}
+              collapsed={collapsed}
+            />
+          ))}
         </div>
       </nav>
     </aside>

@@ -16,6 +16,7 @@ import Users from './pages/Users/Users'
 import Settings from './pages/Settings'
 import Login from './pages/auth/Login'
 import NotFound from './pages/NotFound'
+import ResetPasswordForm from './pages/auth/ResetPassword'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +40,10 @@ const App = () => (
             <Route
               path="/login"
               element={<Login />}
+            />
+            <Route
+              path="/password"
+              element={<ResetPasswordForm />}
             />
           </Route>
 

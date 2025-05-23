@@ -14,33 +14,13 @@ import { Form } from 'react-final-form'
 
 import TextField from '@/components/TextField'
 import { useChangePassword } from '@/api/useSession'
+import LoadingSVG from '@/components/ui/LoadingSVG'
 
 const ResetPasswordForm = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
   const navigate = useNavigate()
 
-  const { mutate: changePassword } = useChangePassword({
-    mutation: {
-      onSuccess: () => {
-        toast({
-          title: 'Password reset successful',
-          description: "Your password has been updated. You'll now be redirected to the dashboard.",
-        })
-        setIsSubmitting(false)
-        navigate('/dashboard')
-      },
-
-      onError: (error) => {
-        toast({
-          title: 'Error',
-          description: error?.response?.data?.error || 'An error occurred.',
-          variant: 'destructive',
-        })
-        setIsSubmitting(false)
-      },
-    },
-  })
+  const { mutate: changePassword, isPending } = useChangePassword()
 
   const handleResetPassword = async (values: {
     oldPassword: string
@@ -56,26 +36,27 @@ const ResetPasswordForm = () => {
       return
     }
 
-    setIsSubmitting(true)
-    try {
-      await changePassword({
+    changePassword(
+      {
         old_password: values.oldPassword,
         password: values.newPassword,
         password_confirmation: values.confirmPassword,
-      })
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: error?.response?.data?.error || 'An error occurred.',
-        variant: 'destructive',
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+      },
+      {
+        onSuccess: () => {
+          toast({
+            title: 'Password reset successful',
+            description:
+              "Your password has been updated. You'll now be redirected to the dashboard.",
+          })
+          navigate('/dashboard')
+        },
+      },
+    )
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full max-w-sm mx-auto mt-10">
       <CardHeader>
         <CardTitle className="text-2xl text-center">Reset Password</CardTitle>
         <CardDescription className="text-center">
@@ -110,23 +91,21 @@ const ResetPasswordForm = () => {
               <button
                 type="submit"
                 className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
-                disabled={isSubmitting}
+                disabled={isPending}
               >
-                {isSubmitting ? 'Processing...' : 'Reset Password'}
+                {isPending ? (
+                  <>
+                    <LoadingSVG />
+                    Processing...
+                  </>
+                ) : (
+                  'Reset Password'
+                )}
               </button>
             </form>
           )}
         </Form>
       </CardContent>
-      <CardFooter className="flex justify-center">
-        <button
-          onClick={() => navigate('/dashboard')}
-          type="button"
-          disabled={isSubmitting}
-        >
-          Skip for now
-        </button>
-      </CardFooter>
     </Card>
   )
 }

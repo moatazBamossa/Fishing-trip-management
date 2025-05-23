@@ -28,7 +28,8 @@ export type UserType = {
   phone: string
   reset_required: boolean
   role: string
-  isAdmin: boolean
+  is_admin?: boolean
+  is_super_admin?: boolean
 }
 
 type LoginResponseType = {
