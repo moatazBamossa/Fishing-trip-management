@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-query'
 import { HTTPValidationError } from '../apiType.type'
 import { publicApi } from '../publicApi'
-import { UserResponseT, UsersResponseT, UserT, UserType } from './useUsers.type'
+import { UserResponseT, UsersResponseT, UserT, UserType } from './useOrgUsers.type'
 import { toast } from '@/components/ui/use-toast'
 
 export const getAllUsersQueryKey = (id: number): QueryKey => ['get_all_users', id]
