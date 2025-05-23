@@ -11,8 +11,8 @@ import TextField from '@/components/TextField'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { required } from '@/lib/utils'
-import { UserT, UserType } from '@/api/Users/useUsers.type'
-import { getAllUsersQueryKey, useCreateUser, useUpdateUser } from '@/api/Users/useUsers'
+import { UserT, UserType } from '@/api/OrgUsers/useOrgUsers.type'
+import { getAllUsersQueryKey, useCreateUser, useUpdateUser } from '@/api/OrgUsers/useOrgUsers'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
 
@@ -138,10 +138,10 @@ const UsersForm = (props: UsersFormProps) => {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
-                disabled={!dirty || !valid || isPending}
+                disabled={!dirty || !valid || isPending || pending}
                 onClick={handleSubmit}
               >
-                {isPending ? (
+                {isPending || pending ? (
                   <>
                     <LoadingSVG />
                     {`${textBTN}ing...`}
