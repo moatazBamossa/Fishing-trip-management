@@ -12,7 +12,11 @@ import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { required } from '@/lib/utils'
 import { UserT, UserType } from '@/api/OrgUsers/useOrgUsers.type'
-import { getAllUsersQueryKey, useCreateUser, useUpdateUser } from '@/api/OrgUsers/useOrgUsers'
+import {
+  getAllOrgUsersQueryKey,
+  useCreateOrgUser,
+  useUpdateOrgUser,
+} from '@/api/OrgUsers/useOrgUsers'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
 
@@ -28,11 +32,11 @@ const UsersForm = (props: UsersFormProps) => {
 
   const textBTN = initialValue?.full_name ? 'Update' : 'Add'
 
-  const { mutate: createUser, isPending } = useCreateUser(organizationId)
-  const { mutate: updateUser, isPending: pending } = useUpdateUser(organizationId)
+  const { mutate: createUser, isPending } = useCreateOrgUser(organizationId)
+  const { mutate: updateUser, isPending: pending } = useUpdateOrgUser(organizationId)
 
   const handelSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey(organizationId) })
+    queryClient.invalidateQueries({ queryKey: getAllOrgUsersQueryKey(organizationId) })
     props.handelCloseDialog()
   }
   return (
