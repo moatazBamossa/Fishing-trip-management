@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -31,13 +31,14 @@ import {
 } from '@/api/OrgUsers/useOrgUsers'
 import UserTableSkeleton from '../../components/ui/UserTableSkeleton'
 import { useQueryClient } from '@tanstack/react-query'
+import { getAllUsersQueryKey, useDeleteUser, useGetUsers } from '@/api/Users/useUsers'
 
 const Users = () => {
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
 
   const {
-    data: users,
+    data: orgUsers,
     isLoading,
     isFetching,
   } = useGetOrgUsers(+id, {
@@ -47,7 +48,20 @@ const Users = () => {
     },
   })
 
-  const { mutate: deleteUser, isPending: pending } = useDeleteOrgUser(+id)
+  const {
+    data: users,
+    isLoading: loading,
+    isFetching: fetching,
+  } = useGetUsers({
+    query: {
+      select: (response) => response.data.users,
+      enabled: !+id,
+    },
+  })
+
+  const allUsers = useMemo(() => (+id ? orgUsers : users), [id, orgUsers, users])
+  const { mutate: deleteOrgUser, isPending: pending } = useDeleteOrgUser(+id)
+  const { mutate: deleteUser, isPending } = useDeleteUser()
   const [showDialog, setShowDialog] = useState(false)
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -78,15 +92,24 @@ const Users = () => {
   const handleDeleteUser = () => {
     if (!selectedUser) return
 
+    if (+id) {
+      deleteOrgUser(selectedUser.id, {
+        onSuccess: () => {
+          toast({
+            title: 'User deleted',
+            description: `${selectedUser.full_name} has been removed.`,
+            variant: 'destructive',
+          })
+          setShowDeleteDialog(false)
+          queryClient.invalidateQueries({ queryKey: getAllOrgUsersQueryKey(+id) })
+        },
+      })
+      return
+    }
     deleteUser(selectedUser.id, {
       onSuccess: () => {
-        toast({
-          title: 'User deleted',
-          description: `${selectedUser.full_name} has been removed.`,
-          variant: 'destructive',
-        })
         setShowDeleteDialog(false)
-        queryClient.invalidateQueries({ queryKey: getAllOrgUsersQueryKey(+id) })
+        queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey })
       },
     })
   }
@@ -125,10 +148,10 @@ const Users = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading || isFetching ? (
+            {isLoading || isFetching || loading || fetching ? (
               <UserTableSkeleton rowCount={3} />
             ) : (
-              users?.map((user) => (
+              allUsers?.map((user) => (
                 <TableRow
                   key={user.id_card_number}
                   className="animate-fade-in"
@@ -197,7 +220,7 @@ const Users = () => {
             <Button
               onClick={handleDeleteUser}
               variant="destructive"
-              disabled={pending}
+              disabled={pending || isPending}
             >
               Delete User
             </Button>

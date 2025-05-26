@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-query'
 import { HTTPValidationError } from '../apiType.type'
 import { publicApi } from '../publicApi'
-import { UserResponseT, UsersResponseT, UserT, UserType } from './useOrgUsers.type'
+import { UserResponseT, UsersResponseT, UserType } from './useOrgUsers.type'
 import { toast } from '@/components/ui/use-toast'
 
 export const getAllOrgUsersQueryKey = (id: number): QueryKey => ['get_all_users', id]
@@ -20,7 +20,7 @@ const getOrgUsers = (orgId: number): Promise<UsersResponseT> =>
     url: `/dashboard/organizations/${orgId}/users`,
   })
 
-const createOrgUsers = (orgId: number, params: UserT): Promise<UserResponseT> =>
+const createOrgUsers = (orgId: number, params: UserType): Promise<UserResponseT> =>
   publicApi({
     method: 'POST',
     url: `/dashboard/organizations/${orgId}/users`,
@@ -56,9 +56,9 @@ export const useGetOrgUsers = <TData = UsersResponseT, TError = HTTPValidationEr
 export const useCreateOrgUser = <TError extends HTTPValidationError>(
   id: number,
   opts?: {
-    mutation?: UseMutationOptions<UserResponseT, TError, UserT>
+    mutation?: UseMutationOptions<UserResponseT, TError, UserType>
   },
-): UseMutationResult<UserResponseT, TError, UserT> => {
+): UseMutationResult<UserResponseT, TError, UserType> => {
   return useMutation({
     ...(opts?.mutation || {}),
     mutationFn: (payload) => createOrgUsers(id, payload),

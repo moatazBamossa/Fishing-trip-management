@@ -11,7 +11,7 @@ import TextField from '@/components/TextField'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { required } from '@/lib/utils'
-import { UserT, UserType } from '@/api/OrgUsers/useOrgUsers.type'
+import { UserType } from '@/api/OrgUsers/useOrgUsers.type'
 import {
   getAllOrgUsersQueryKey,
   useCreateOrgUser,
@@ -19,6 +19,7 @@ import {
 } from '@/api/OrgUsers/useOrgUsers'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
+import { getAllUsersQueryKey, useCreateUser, useUpdateUser } from '@/api/Users/useUsers'
 
 type UsersFormProps = {
   initialValue: UserType | null
@@ -32,27 +33,75 @@ const UsersForm = (props: UsersFormProps) => {
 
   const textBTN = initialValue?.full_name ? 'Update' : 'Add'
 
-  const { mutate: createUser, isPending } = useCreateOrgUser(organizationId)
-  const { mutate: updateUser, isPending: pending } = useUpdateOrgUser(organizationId)
+  const { mutate: createOrgUser, isPending } = useCreateOrgUser(organizationId)
+  const { mutate: createUser, isPending: createPending } = useCreateUser()
+  const { mutate: updateOrgUser, isPending: pending } = useUpdateOrgUser(organizationId)
+  const { mutate: updateUser, isPending: updatePending } = useUpdateUser()
 
-  const handelSuccess = () => {
+  const handelOrgSuccess = () => {
     queryClient.invalidateQueries({ queryKey: getAllOrgUsersQueryKey(organizationId) })
     props.handelCloseDialog()
+  }
+  const handelSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey })
+    props.handelCloseDialog()
+  }
+
+  const userActions = {
+    org: {
+      create: createOrgUser,
+      update: updateOrgUser,
+    },
+    normal: {
+      create: createUser,
+      update: updateUser,
+    },
+  }
+
+  const onSubmitForm = (values: UserType) => {
+    const context = organizationId ? 'org' : 'normal'
+    const action = initialValue?.id ? 'update' : 'create'
+
+    const val = initialValue?.id
+      ? {
+          ...initialValue,
+          ...values,
+        }
+      : values
+    return userActions[context][action](val, {
+      onSuccess: organizationId ? handelOrgSuccess : handelSuccess,
+    })
   }
   return (
     <Form
       initialValues={initialValue}
-      onSubmit={(values: UserT) => {
+      onSubmit={(values: UserType) => {
         if (initialValue?.id) {
+          if (organizationId) {
+            updateOrgUser(
+              {
+                ...initialValue,
+                ...values,
+              },
+              {
+                onSuccess: handelOrgSuccess,
+              },
+            )
+            return
+          }
           updateUser(
             {
               ...initialValue,
               ...values,
             },
-            {
-              onSuccess: handelSuccess,
-            },
+            { onSuccess: handelSuccess },
           )
+          return
+        }
+        if (organizationId) {
+          createOrgUser(values, {
+            onSuccess: handelOrgSuccess,
+          })
           return
         }
         createUser(values, {
@@ -142,10 +191,12 @@ const UsersForm = (props: UsersFormProps) => {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
-                disabled={!dirty || !valid || isPending || pending}
+                disabled={
+                  !dirty || !valid || isPending || pending || createPending || updatePending
+                }
                 onClick={handleSubmit}
               >
-                {isPending || pending ? (
+                {isPending || pending || createPending || updatePending ? (
                   <>
                     <LoadingSVG />
                     {`${textBTN}ing...`}

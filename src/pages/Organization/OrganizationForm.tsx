@@ -38,7 +38,7 @@ const OrganizationForm = (props: OrganizationFormProps) => {
 
   const textBTN = initialValue?.name ? 'Update' : 'Add'
   const onSubmitForm = (values: OrganizationType) => {
-    if (initialValue.id) {
+    if (initialValue?.id) {
       updateOrganization(values, {
         onSuccess: () => {
           handelSuccess()
