@@ -59,7 +59,7 @@ export const useAuthStore = create<AuthState>()(
         saveUserSecureData(
           {
             token: state.token,
-            isAdmin: state?.user.is_admin ?? false,
+            isAdmin: state?.user?.is_admin ?? false,
             isSuperAdmin: state?.user?.role === 'super_admin',
           },
           'secureUserData',
