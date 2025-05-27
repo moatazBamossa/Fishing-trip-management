@@ -1,0 +1,6 @@
+name = "your-project-name"
+type = "javascript"
+compatibility_date = "2025-05-27"
+
+[site]
+bucket = "./dist"

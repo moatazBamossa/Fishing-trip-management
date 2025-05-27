@@ -10,6 +10,10 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     open: true,
   },
+  build: {
+    cssMinify: false, // Disable CSS minification if using template literals
+    chunkSizeWarningLimit: 1000, // Increase chunk size limit
+  },
   plugins: [react(), mode === 'development' && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
