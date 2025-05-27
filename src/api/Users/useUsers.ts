@@ -34,7 +34,7 @@ const updateUsers = (params: UserType): Promise<UsersResponseT> => {
     params: { user: rest },
   })
 }
-
+// apis
 const deleteUsers = (userId: number): Promise<UsersResponseT> =>
   publicApi({
     method: 'DELETE',
