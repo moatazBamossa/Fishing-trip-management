@@ -1,5 +1,4 @@
 import {
-  QueryKey,
   useMutation,
   UseMutationOptions,
   UseMutationResult,

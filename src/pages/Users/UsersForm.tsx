@@ -10,7 +10,6 @@ import {
 import TextField from '@/components/TextField'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { required } from '@/lib/utils'
 import { UserType } from '@/api/OrgUsers/useOrgUsers.type'
 import {
   getAllOrgUsersQueryKey,
@@ -75,39 +74,7 @@ const UsersForm = (props: UsersFormProps) => {
   return (
     <Form
       initialValues={initialValue}
-      onSubmit={(values: UserType) => {
-        if (initialValue?.id) {
-          if (organizationId) {
-            updateOrgUser(
-              {
-                ...initialValue,
-                ...values,
-              },
-              {
-                onSuccess: handelOrgSuccess,
-              },
-            )
-            return
-          }
-          updateUser(
-            {
-              ...initialValue,
-              ...values,
-            },
-            { onSuccess: handelSuccess },
-          )
-          return
-        }
-        if (organizationId) {
-          createOrgUser(values, {
-            onSuccess: handelOrgSuccess,
-          })
-          return
-        }
-        createUser(values, {
-          onSuccess: handelSuccess,
-        })
-      }}
+      onSubmit={onSubmitForm}
     >
       {({ handleSubmit, valid, dirty }): JSX.Element => (
         <form
