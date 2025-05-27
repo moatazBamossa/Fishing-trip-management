@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { cn, getUserSecureData } from '@/lib/utils'
-import { Home, LayoutDashboard, Users, Settings, ChevronRight, ChevronLeft } from 'lucide-react'
+import { Home, LayoutDashboard, Users, Settings } from 'lucide-react'
 
 interface SidebarProps {
   collapsed: boolean

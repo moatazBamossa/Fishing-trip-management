@@ -26,12 +26,14 @@ const createUsers = (params: UserType): Promise<UsersResponseT> =>
     params: { user: params },
   })
 
-const updateUsers = (params: UserType): Promise<UsersResponseT> =>
-  publicApi({
+const updateUsers = (params: UserType): Promise<UsersResponseT> => {
+  const { id, ...rest } = params
+  return publicApi({
     method: 'PUT',
-    url: `users/${params?.id}`,
-    params: { user: params },
+    url: `users/${id}`,
+    params: { user: rest },
   })
+}
 
 const deleteUsers = (userId: number): Promise<UsersResponseT> =>
   publicApi({

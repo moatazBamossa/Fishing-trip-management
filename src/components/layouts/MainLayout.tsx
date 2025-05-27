@@ -5,7 +5,6 @@ import Navbar from '../navigation/Navbar'
 import { cn } from '@/lib/utils'
 import { useIsMobile } from '@/hooks/use-mobile'
 import { Drawer, DrawerContent } from '@/components/ui/drawer'
-import { useAuthStore } from '@/stores/auth.store'
 
 const MainLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)

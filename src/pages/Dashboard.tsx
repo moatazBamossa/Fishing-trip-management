@@ -1,4 +1,3 @@
-import { Anchor, DollarSign, Ship } from 'lucide-react'
 import DashboardSummary from '@/components/dashboard/DashboardSummary'
 import DataTable from '@/components/dashboard/DataTable'
 import BoatsTable, { Boat } from '@/components/dashboard/BoatsTable'

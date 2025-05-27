@@ -32,13 +32,6 @@ import LoadingSVG from '@/components/ui/LoadingSVG'
 import { useNavigate } from 'react-router-dom'
 import UserTableSkeleton from '@/components/ui/UserTableSkeleton'
 
-interface User {
-  id: number
-  name: string
-  email: string
-  role: string
-}
-
 const Organization = () => {
   const navigate = useNavigate()
 
