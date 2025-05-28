@@ -17,6 +17,7 @@ import Settings from './pages/Settings'
 import Login from './pages/auth/Login'
 import NotFound from './pages/NotFound'
 import ResetPasswordForm from './pages/auth/ResetPassword'
+import Boats from './pages/Boats'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +65,10 @@ const App = () => (
             <Route
               path="/users"
               element={<Users />}
+            />
+            <Route
+              path="/boats"
+              element={<Boats />}
             />
             <Route
               path="/settings"
