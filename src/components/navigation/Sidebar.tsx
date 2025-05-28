@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { cn, getUserSecureData } from '@/lib/utils'
-import { Home, LayoutDashboard, Users, Settings } from 'lucide-react'
+import { Home, LayoutDashboard, Users, Settings, Sailboat } from 'lucide-react'
 
 interface SidebarProps {
   collapsed: boolean
@@ -56,8 +56,9 @@ const NavItem = ({
 
 const sidebarItems = ({ isAdmin, isSuperAdmin }) =>
   [
-    isSuperAdmin && { to: '/organization', icon: Home, label: 'Organization' },
     { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { to: '/boats', icon: Sailboat, label: 'Boats' },
+    isSuperAdmin && { to: '/organization', icon: Home, label: 'Organization' },
     isAdmin && { to: '/users', icon: Users, label: 'Users' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ].filter(Boolean)
