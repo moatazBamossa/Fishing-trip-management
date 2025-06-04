@@ -10,55 +10,37 @@ import {
 import TextField from '@/components/TextField'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
-import { UserType } from '@/api/OrgUsers/useOrgUsers.type'
-import {
-  getAllOrgUsersQueryKey,
-  useCreateOrgUser,
-  useUpdateOrgUser,
-} from '@/api/OrgUsers/useOrgUsers'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
-import { getAllUsersQueryKey, useCreateUser, useUpdateUser } from '@/api/Users/useUsers'
+import { getAllBoatsQueryKey, useCreateBoat, useUpdateBoats } from '@/api/Boats/useBoats'
+import { BoatParamsType } from '@/api/Boats/useBoats.type'
 
-type UsersFormProps = {
-  initialValue: UserType | null
+type BoatFormProps = {
+  initialValue: BoatParamsType | null
   handelCloseDialog: () => void
-  organizationId?: number
 }
 
-const BoatsForm = (props: UsersFormProps) => {
-  const { initialValue, organizationId } = props
+const BoatsForm = (props: BoatFormProps) => {
+  const { initialValue } = props
   const queryClient = useQueryClient()
 
-  const textBTN = initialValue?.full_name ? 'Update' : 'Add'
+  const textBTN = initialValue?.name ? 'Update' : 'Add'
 
-  const { mutate: createOrgUser, isPending } = useCreateOrgUser(organizationId)
-  const { mutate: createUser, isPending: createPending } = useCreateUser()
-  const { mutate: updateOrgUser, isPending: pending } = useUpdateOrgUser(organizationId)
-  const { mutate: updateUser, isPending: updatePending } = useUpdateUser()
+  const { mutate: createBoat, isPending: createPending } = useCreateBoat()
 
-  const handelOrgSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: getAllOrgUsersQueryKey(organizationId) })
-    props.handelCloseDialog()
-  }
+  const { mutate: updateBoat, isPending: updatePending } = useUpdateBoats()
+
   const handelSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey })
+    queryClient.invalidateQueries({ queryKey: getAllBoatsQueryKey })
     props.handelCloseDialog()
   }
 
-  const userActions = {
-    org: {
-      create: createOrgUser,
-      update: updateOrgUser,
-    },
-    normal: {
-      create: createUser,
-      update: updateUser,
-    },
+  const boatActions = {
+    create: createBoat,
+    update: updateBoat,
   }
 
-  const onSubmitForm = (values: UserType) => {
-    const context = organizationId ? 'org' : 'normal'
+  const onSubmitForm = (values: BoatParamsType) => {
     const action = initialValue?.id ? 'update' : 'create'
 
     const val = initialValue?.id
@@ -67,8 +49,8 @@ const BoatsForm = (props: UsersFormProps) => {
           ...values,
         }
       : values
-    return userActions[context][action](val, {
-      onSuccess: organizationId ? handelOrgSuccess : handelSuccess,
+    return boatActions[action](val, {
+      onSuccess: handelSuccess,
     })
   }
   return (
@@ -83,74 +65,53 @@ const BoatsForm = (props: UsersFormProps) => {
         >
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
-              <DialogTitle>Add New User</DialogTitle>
-              <DialogDescription>Enter user details to create a new account.</DialogDescription>
+              <DialogTitle>{textBTN} boat</DialogTitle>
+              <DialogDescription>Enter boat details to {textBTN} a new boat.</DialogDescription>
             </DialogHeader>
 
             <div className="flex flex-col gap-4">
               <TextField
-                name="full_name"
-                label="full name"
-                // onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                name="name"
+                label="name boat"
                 className="col-span-3"
               />
               <TextField
-                name="email"
-                label="email"
-                type="email"
-                // onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                name="owner"
+                label="owner"
                 className="col-span-3"
               />
               <div className="flex gap-2  items-center">
                 <TextField
-                  name="address"
-                  label="address"
-                  // onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                  name="registration_number"
+                  label="registration number"
                 />
-                <Field name="role">
+                <Field name="rental_status">
                   {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
                     <div className="flex flex-col gap-2 items-start w-[40%]">
                       <Label
-                        htmlFor="edit-role"
+                        htmlFor="rental-status"
                         className="text-right"
                       >
                         Role
                       </Label>
                       <select
-                        id="edit-role"
+                        id="rental-status"
                         value={input.value}
                         {...input}
                         className="col-span-3 flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
+                        <option value="user">Owner</option>
+                        <option value="admin">Rental</option>
                       </select>
                     </div>
                   )}
                 </Field>
               </div>
               <TextField
-                name="phone"
-                label="phone"
-                // onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                name="capacity"
+                label="capacity"
                 className="col-span-3"
               />
-              <TextField
-                name="id_card_number"
-                label="id card number"
-                // onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                className="col-span-3"
-              />
-
-              <div className="grid items-center gap-4">
-                <TextField
-                  name="password"
-                  label="password"
-                  type="password"
-                  // onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                  className="col-span-3"
-                />
-              </div>
             </div>
 
             <DialogFooter>
@@ -158,12 +119,10 @@ const BoatsForm = (props: UsersFormProps) => {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
-                disabled={
-                  !dirty || !valid || isPending || pending || createPending || updatePending
-                }
+                disabled={!dirty || !valid || createPending || updatePending}
                 onClick={handleSubmit}
               >
-                {isPending || pending || createPending || updatePending ? (
+                {createPending || updatePending ? (
                   <>
                     <LoadingSVG />
                     {`${textBTN}ing...`}

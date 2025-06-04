@@ -30,7 +30,7 @@ import OrganizationForm from './OrganizationForm'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
 import { useNavigate } from 'react-router-dom'
-import UserTableSkeleton from '@/components/ui/UserTableSkeleton'
+import TableSkeleton from '@/components/ui/TableSkeleton'
 
 const Organization = () => {
   const navigate = useNavigate()
@@ -118,7 +118,7 @@ const Organization = () => {
           </TableHeader>
           <TableBody>
             {isFetching || isLoading ? (
-              <UserTableSkeleton rowCount={3} />
+              <TableSkeleton rowCount={3} />
             ) : (
               orgNames?.map((organization) => (
                 <TableRow

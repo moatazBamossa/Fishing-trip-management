@@ -29,7 +29,7 @@ import {
   useDeleteOrgUser,
   useGetOrgUsers,
 } from '@/api/OrgUsers/useOrgUsers'
-import UserTableSkeleton from '../../components/ui/UserTableSkeleton'
+import TableSkeleton from '../../components/ui/TableSkeleton'
 import { useQueryClient } from '@tanstack/react-query'
 import { getAllUsersQueryKey, useDeleteUser, useGetUsers } from '@/api/Users/useUsers'
 
@@ -149,7 +149,7 @@ const Users = () => {
           </TableHeader>
           <TableBody>
             {isLoading || isFetching || loading || fetching ? (
-              <UserTableSkeleton rowCount={3} />
+              <TableSkeleton rowCount={3} />
             ) : (
               allUsers?.map((user) => (
                 <TableRow
