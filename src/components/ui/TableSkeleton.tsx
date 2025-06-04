@@ -1,7 +1,7 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { TableCell, TableRow } from '@/components/ui/table'
 
-const UserTableSkeleton = ({ rowCount = 5 }: { rowCount?: number }) => {
+const TableSkeleton = ({ rowCount = 5 }: { rowCount?: number }) => {
   return (
     <>
       {Array.from({ length: rowCount }).map((_, index) => (
@@ -38,4 +38,4 @@ const UserTableSkeleton = ({ rowCount = 5 }: { rowCount?: number }) => {
     </>
   )
 }
-export default UserTableSkeleton
+export default TableSkeleton

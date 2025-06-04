@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import {
   Table,
   TableBody,
@@ -18,98 +18,61 @@ import {
   DialogClose,
 } from '@/components/ui/dialog'
 
-import { UserPlus, Edit, Trash2, ArrowBigLeft } from 'lucide-react'
-import { useToast } from '@/hooks/use-toast'
-import { useNavigate } from 'react-router-dom'
-import { useParams } from 'react-router-dom'
+import { Ship, Edit, Trash2 } from 'lucide-react'
+
 import BoatsForm from './BoatsForm'
-import { UserType } from '@/api/OrgUsers/useOrgUsers.type'
-import {
-  getAllOrgUsersQueryKey,
-  useDeleteOrgUser,
-  useGetOrgUsers,
-} from '@/api/OrgUsers/useOrgUsers'
-import UserTableSkeleton from '../../components/ui/UserTableSkeleton'
+
+import TableSkeleton from '../../components/ui/TableSkeleton'
 import { useQueryClient } from '@tanstack/react-query'
-import { getAllUsersQueryKey, useDeleteUser, useGetUsers } from '@/api/Users/useUsers'
+
+import { getAllBoatsQueryKey, useDeleteBoat, useGetBoats } from '@/api/Boats/useBoats'
+import StatusBadge from '@/components/dashboard/StatusBadge'
+import { BoatParamsType } from '@/api/Boats/useBoats.type'
 
 const Boats = () => {
-  const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
 
   const {
-    data: orgUsers,
-    isLoading,
-    isFetching,
-  } = useGetOrgUsers(+id, {
-    query: {
-      select: (response) => response.data.users,
-      enabled: !!+id,
-    },
-  })
-
-  const {
-    data: users,
+    data: boats,
     isLoading: loading,
     isFetching: fetching,
-  } = useGetUsers({
+  } = useGetBoats({
     query: {
-      select: (response) => response.data.users,
-      enabled: !+id,
+      select: (response) => response.data.boats,
     },
   })
 
-  const allUsers = useMemo(() => (+id ? orgUsers : users), [id, orgUsers, users])
-  const { mutate: deleteOrgUser, isPending: pending } = useDeleteOrgUser(+id)
-  const { mutate: deleteUser, isPending } = useDeleteUser()
+  const { mutate: deleteBoat, isPending } = useDeleteBoat()
   const [showDialog, setShowDialog] = useState(false)
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
-
-  const navigate = useNavigate()
-
-  const { toast } = useToast()
+  const [selectedBoat, setSelectedBoat] = useState<BoatParamsType | null>(null)
 
   // Open edit dialog
-  const handleEditClick = (user) => {
-    setSelectedUser(user)
+  const handleEditClick = (boat) => {
+    setSelectedBoat(boat)
     setShowDialog(true)
   }
 
   const handelCloseDialog = () => {
-    setSelectedUser(null)
+    setSelectedBoat(null)
     setShowDialog(false)
   }
 
   // Open delete dialog
-  const handleDeleteClick = (user) => {
-    setSelectedUser(user)
+  const handleDeleteClick = (boat) => {
+    setSelectedBoat(boat)
     setShowDeleteDialog(true)
   }
 
-  // Delete user
-  const handleDeleteUser = () => {
-    if (!selectedUser) return
+  // Delete boat
+  const handleDeleteBoat = () => {
+    if (!selectedBoat) return
 
-    if (+id) {
-      deleteOrgUser(selectedUser.id, {
-        onSuccess: () => {
-          toast({
-            title: 'User deleted',
-            description: `${selectedUser.full_name} has been removed.`,
-            variant: 'destructive',
-          })
-          setShowDeleteDialog(false)
-          queryClient.invalidateQueries({ queryKey: getAllOrgUsersQueryKey(+id) })
-        },
-      })
-      return
-    }
-    deleteUser(selectedUser.id, {
+    deleteBoat(selectedBoat.id, {
       onSuccess: () => {
         setShowDeleteDialog(false)
-        queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey })
+        queryClient.invalidateQueries({ queryKey: getAllBoatsQueryKey })
       },
     })
   }
@@ -118,20 +81,14 @@ const Boats = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div className="flex gap-2 justify-center items-center">
-          {id && (
-            <ArrowBigLeft
-              size={30}
-              onClick={() => navigate(-1)}
-            />
-          )}
-          <h1 className="text-3xl font-bold">Users</h1>
+          <h1 className="text-3xl font-bold">Boats</h1>
         </div>
         <Button
           onClick={() => setShowDialog(true)}
           className="animate-fade-in"
         >
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add User
+          <Ship className="mr-2 h-4 w-4" />
+          Add Boat
         </Button>
       </div>
 
@@ -139,33 +96,40 @@ const Boats = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Number</TableHead>
-              <TableHead>Role</TableHead>
+              <TableHead>Modal</TableHead>
+              <TableHead>status</TableHead>
+              <TableHead>Rental</TableHead>
+              <TableHead>Capacity</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading || isFetching || loading || fetching ? (
-              <UserTableSkeleton rowCount={3} />
+            {loading || fetching ? (
+              <TableSkeleton rowCount={3} />
             ) : (
-              allUsers?.map((user) => (
+              boats?.map((boat) => (
                 <TableRow
-                  key={user.id_card_number}
+                  key={boat?.id}
                   className="animate-fade-in"
                 >
-                  <TableCell>{user.id_card_number}</TableCell>
-                  <TableCell>{user.full_name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                  <TableCell>{user.role}</TableCell>
+                  <TableCell>{boat.name}</TableCell>
+                  <TableCell>{boat.model}</TableCell>
+                  {/* <TableCell>{boat.status_i18n}</TableCell> */}
+                  <TableCell>
+                    <StatusBadge
+                      status={boat.status}
+                      type="boat"
+                      name={boat.status_i18n}
+                    />
+                  </TableCell>
+                  <TableCell>{boat.rental_status_i18n}</TableCell>
+                  <TableCell>{boat.capacity}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleEditClick(user)}
+                      onClick={() => handleEditClick(boat)}
                       className="hover:bg-gray-100"
                     >
                       <Edit className="h-4 w-4" />
@@ -173,7 +137,7 @@ const Boats = () => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleDeleteClick(user)}
+                      onClick={() => handleDeleteClick(boat)}
                       className="hover:bg-gray-100"
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
@@ -186,7 +150,7 @@ const Boats = () => {
         </Table>
       </div>
 
-      {/* Add User Dialog */}
+      {/* Add boat Dialog */}
       <Dialog
         open={showDialog}
         onOpenChange={(open) => {
@@ -196,8 +160,7 @@ const Boats = () => {
       >
         <BoatsForm
           handelCloseDialog={handelCloseDialog}
-          initialValue={selectedUser}
-          organizationId={+id}
+          initialValue={selectedBoat}
         />
       </Dialog>
 
@@ -209,8 +172,7 @@ const Boats = () => {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete {selectedUser?.full_name}? This action cannot be
-              undone.
+              Are you sure you want to delete {selectedBoat?.name}? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -218,11 +180,11 @@ const Boats = () => {
               <Button variant="outline">Cancel</Button>
             </DialogClose>
             <Button
-              onClick={handleDeleteUser}
+              onClick={handleDeleteBoat}
               variant="destructive"
-              disabled={pending || isPending}
+              disabled={isPending}
             >
-              Delete User
+              Delete Boat
             </Button>
           </DialogFooter>
         </DialogContent>
