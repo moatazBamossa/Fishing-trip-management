@@ -63,7 +63,7 @@ const OrganizationForm = (props: OrganizationFormProps) => {
           className="space-y-6"
           noValidate
         >
-          <DialogContent className="sm:max-w-[425px]">
+          <DialogContent className="sm:max-w-[425px] overflow-y-auto max-h-[80vh]">
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
               <DialogDescription>Enter user details to create a new account.</DialogDescription>
