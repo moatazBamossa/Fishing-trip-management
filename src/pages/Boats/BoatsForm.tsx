@@ -63,7 +63,7 @@ const BoatsForm = (props: BoatFormProps) => {
           className="space-y-6"
           noValidate
         >
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px] overflow-y-auto max-h-[80vh]">
             <DialogHeader>
               <DialogTitle>{textBTN} boat</DialogTitle>
               <DialogDescription>Enter boat details to {textBTN} a new boat.</DialogDescription>

@@ -81,7 +81,7 @@ const UsersForm = (props: UsersFormProps) => {
           className="space-y-6"
           noValidate
         >
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px] overflow-y-auto max-h-[80vh]">
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
               <DialogDescription>Enter user details to create a new account.</DialogDescription>
