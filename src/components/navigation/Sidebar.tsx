@@ -9,6 +9,7 @@ import {
   LogOut,
   ChevronRight,
   ChevronLeft,
+  Notebook,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
@@ -64,11 +65,12 @@ const sidebarItems = ({ isAdmin, isSuperAdmin }) =>
     { to: '/boats', icon: Sailboat, label: 'Boats' },
     isSuperAdmin && { to: '/organization', icon: Home, label: 'Organization' },
     isAdmin && { to: '/users', icon: Users, label: 'Users' },
+    { to: '/trip', icon: Notebook, label: 'trip' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ].filter(Boolean)
 const Sidebar = (props: SidebarProps) => {
   const { collapsed } = props
-  const { isAdmin, isSuperAdmin } = getUserSecureData('secureUserData')
+  const { isAdmin, isSuperAdmin } = getUserSecureData('secureUserData') || {}
 
   return (
     <aside

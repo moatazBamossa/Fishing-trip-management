@@ -18,6 +18,7 @@ import Login from './pages/auth/Login'
 import NotFound from './pages/NotFound'
 import ResetPasswordForm from './pages/auth/ResetPassword'
 import Boats from './pages/Boats'
+import Trip from './pages/Trip/Trip'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,6 +58,10 @@ const App = () => (
             <Route
               path="/organization/:id/users"
               element={<Users />}
+            />
+            <Route
+              path="/trip"
+              element={<Trip />}
             />
             <Route
               path="/dashboard"
