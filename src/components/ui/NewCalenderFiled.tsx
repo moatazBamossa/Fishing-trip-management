@@ -1,5 +1,3 @@
-'use client'
-
 import * as React from 'react'
 import { ChevronDownIcon } from 'lucide-react'
 import { format, parseISO } from 'date-fns'
@@ -19,6 +17,8 @@ type NewCalenderType = {
   parse?: <V, R>(value: V, name: string) => R
   required?: boolean
   dateFormat?: string
+  disabledValue?: Date
+  onChange?: (value: Date) => void
 }
 
 const NewCalenderFiled = (props: NewCalenderType) => {
@@ -30,6 +30,7 @@ const NewCalenderFiled = (props: NewCalenderType) => {
     validate,
     placeholder = 'Select date',
     dateFormat = 'dd/MM/yyyy',
+    disabledValue,
     parse,
     ...rest
   } = props
@@ -73,7 +74,18 @@ const NewCalenderFiled = (props: NewCalenderType) => {
                   if (date) {
                     input.onChange(date.toISOString()) // Convert date to string and update the field value
                   }
+                  props?.onChange?.(date)
                   setOpen(false)
+                }}
+                disabled={(date) => {
+                  if (isNaN(disabledValue?.getTime())) {
+                    return false // If disabledValue is not a valid date, do not disable any dates
+                  }
+                  // Disable dates before the specified date
+                  if (date instanceof Date && isNaN(date.getTime())) {
+                    return false // If date is not a valid date, do not disable it
+                  }
+                  return date < disabledValue
                 }}
                 {...rest}
               />

@@ -1,4 +1,4 @@
-import { Form } from 'react-final-form'
+import { Field, FieldRenderProps, Form } from 'react-final-form'
 import {
   DialogContent,
   DialogHeader,
@@ -12,30 +12,54 @@ import { Button } from '@/components/ui/button'
 import Combobox from '@/components/ui/Combobox'
 
 import NewCalenderFiled from '@/components/ui/NewCalenderFiled'
-import { useState } from 'react'
+import { TripParamsType } from '@/api/Trip/useTrip.trip'
+import LoadingSVG from '@/components/ui/LoadingSVG'
+import { useCreateTrip, useUpdateTrip } from '@/api/Trip/useTrip'
+import { useGetBoats } from '@/api/Boats/useBoats'
+
 // import LoadingSVG from '@/components/ui/LoadingSVG'
 
 type TripFormType = {
-  initialValue: unknown
-  onSubmit: (values: unknown) => void
+  initialValue?: Partial<TripParamsType> & { id?: number }
+  onSubmit?: (values: TripParamsType) => void
+  fetching?: boolean
+  handelCloseDialog: () => void
+  handelOnSuccess: () => void
 }
 
-const frameworks = [
-  { value: 'next.js', label: 'Next.js' },
-  { value: 'sveltekit', label: 'SvelteKit' },
-  { value: 'nuxt.js', label: 'Nuxt.js' },
-  { value: 'remix', label: 'Remix' },
-  { value: 'astro', label: 'Astro' },
-]
 const TripForm = (props: TripFormType) => {
   const { initialValue } = props
-  const [selectedFramework, setSelectedFramework] = useState('')
+
+  const {
+    data: boats,
+    isLoading: loading,
+    isFetching: fetching,
+  } = useGetBoats({
+    query: {
+      select: (response) => response.data.boats,
+    },
+  })
+
+  const { mutate: createTrip, isPending: creating } = useCreateTrip()
+  const { mutate: updateTrip, isPending: updating } = useUpdateTrip()
+
+  const textBTN = initialValue?.id ? 'Update' : 'Add'
+  const onSubmit = (values: TripParamsType) => {
+    if (values?.id) {
+      return updateTrip(values, {
+        onSuccess: props.handelOnSuccess,
+      })
+    }
+    createTrip(values, {
+      onSuccess: props.handelOnSuccess,
+    })
+  }
   return (
     <Form
       initialValues={initialValue}
-      onSubmit={props.onSubmit}
+      onSubmit={onSubmit}
     >
-      {({ handleSubmit, valid, dirty }): JSX.Element => (
+      {({ handleSubmit, valid, dirty, values, form }): JSX.Element => (
         <form
           className="space-y-6"
           noValidate
@@ -62,10 +86,16 @@ const TripForm = (props: TripFormType) => {
                 <NewCalenderFiled
                   name="start_date"
                   label="Start Date"
+                  onChange={(date) => {
+                    if (date > new Date(values?.end_date)) form.change('end_date', '') // Reset start date when end date changesform.change('end_date', undefined) // Reset end date when start date changes
+                  }}
                 />
                 <NewCalenderFiled
                   name="end_date"
                   label="End Date"
+                  disabledValue={
+                    new Date(new Date(values.start_date).getTime() + 24 * 60 * 60 * 1000)
+                  }
                 />
               </div>
 
@@ -77,13 +107,24 @@ const TripForm = (props: TripFormType) => {
                   className="col-span-3"
                 />
 
-                <Combobox
-                  options={frameworks}
-                  value={selectedFramework}
-                  onChange={setSelectedFramework}
-                  placeholder="Choose a Boat"
-                  className="h-12 mt-6"
-                />
+                <Field
+                  name="boat_id"
+                  validate={(value: string) => (value ? undefined : 'Boat is required')}
+                >
+                  {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
+                    <Combobox
+                      options={boats.map((boat) => ({
+                        value: String(boat.id),
+                        label: boat.name,
+                      }))}
+                      value={String(input?.value)}
+                      onChange={input.onChange}
+                      placeholder="Choose a Boat"
+                      className="h-12 mt-6"
+                      disabled={loading || fetching}
+                    />
+                  )}
+                </Field>
               </div>
 
               <div className="flex gap-2 justify-between items-center">
@@ -105,10 +146,17 @@ const TripForm = (props: TripFormType) => {
                 <Button variant="outline">Cancel</Button>
               </DialogClose>
               <Button
-                disabled={!dirty || !valid}
+                disabled={!dirty || !valid || creating || updating}
                 onClick={handleSubmit}
               >
-                Submit
+                {creating || updating ? (
+                  <>
+                    <LoadingSVG />
+                    {`${textBTN}ing...`}
+                  </>
+                ) : (
+                  textBTN
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
