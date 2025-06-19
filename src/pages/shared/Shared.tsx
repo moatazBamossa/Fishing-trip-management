@@ -13,6 +13,7 @@ import {
 
 type SharedProps<T = unknown> = {
   title: string
+  skeletonCount?: number
   addNew: () => void
   NewIcon: React.ElementType
   SharedForm?: React.ElementType
@@ -39,6 +40,7 @@ const Shared = (props: SharedProps) => {
     showDeleteDialog,
     isDeletingPending,
     title,
+    skeletonCount = 6,
   } = props
   return (
     <div className="space-y-6">
@@ -59,7 +61,7 @@ const Shared = (props: SharedProps) => {
         columns={columns}
         data={data}
         isLoading={isFetching}
-        skeleton={<TableSkeleton rowCount={3} />}
+        skeleton={<TableSkeleton columnCount={skeletonCount} />}
         rowRenderer={(row) => props.rowRenderer(row)}
       />
 

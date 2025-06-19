@@ -1,17 +1,22 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { TableCell, TableRow } from '@/components/ui/table'
 
-const TableSkeleton = ({ rowCount = 5 }: { rowCount?: number }) => {
+type TableSkeletonProps = {
+  rowCount?: number
+  columnCount?: number
+}
+
+const TableSkeleton = ({ rowCount = 5, columnCount = 6 }: TableSkeletonProps) => {
   return (
     <>
       {Array.from({ length: rowCount }).map((_, index) => (
         <TableRow key={`skeleton-${index}`}>
-          {Array.from({ length: 6 }).map((_, cellIndex) => (
+          {Array.from({ length: columnCount }).map((_, cellIndex) => (
             <TableCell
               key={`skeleton-cell-${index}-${cellIndex}`}
-              className={cellIndex === 5 ? 'text-right space-x-2' : undefined}
+              className={cellIndex === columnCount - 1 ? 'text-right space-x-2' : undefined}
             >
-              {cellIndex === 5 ? (
+              {cellIndex === 6 ? (
                 <>
                   <Skeleton className="h-8 w-8 inline-block" />
                   <Skeleton className="h-8 w-8 inline-block" />

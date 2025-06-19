@@ -25,6 +25,7 @@ type ComboboxProps = {
   onChange: (value: string) => void
   placeholder?: string
   className?: string
+  disabled?: boolean
 }
 
 const Combobox = ({
@@ -33,6 +34,7 @@ const Combobox = ({
   onChange,
   placeholder = 'Select an option...',
   className,
+  disabled,
 }: ComboboxProps) => {
   const [open, setOpen] = useState(false)
 
@@ -49,6 +51,7 @@ const Combobox = ({
           role="combobox"
           aria-expanded={open}
           className={cn('w-[200px] justify-between', className)}
+          disabled={disabled}
         >
           {selectedLabel ?? placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
