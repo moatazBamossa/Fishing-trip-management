@@ -19,6 +19,7 @@ import NotFound from './pages/NotFound'
 import ResetPasswordForm from './pages/auth/ResetPassword'
 import Boats from './pages/Boats'
 import Trip from './pages/Trip/Trip'
+import TripSteps from './pages/TripSteps'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,6 +63,10 @@ const App = () => (
             <Route
               path="/trip"
               element={<Trip />}
+            />
+            <Route
+              path="/trip/:id"
+              element={<TripSteps />}
             />
             <Route
               path="/dashboard"

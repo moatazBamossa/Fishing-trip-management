@@ -38,7 +38,7 @@ const Combobox = ({
 }: ComboboxProps) => {
   const [open, setOpen] = useState(false)
 
-  const selectedLabel = options.find((opt) => opt.value === value)?.label
+  const selectedLabel = options?.find((opt) => opt.value === value)?.label
 
   return (
     <Popover
@@ -66,7 +66,7 @@ const Combobox = ({
           <CommandList>
             <CommandEmpty>No option found.</CommandEmpty>
             <CommandGroup>
-              {options.map((option) => (
+              {options?.map((option) => (
                 <CommandItem
                   key={option.value}
                   value={option.value}
