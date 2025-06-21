@@ -12,6 +12,7 @@ import { HTTPValidationError } from '../apiType.type'
 
 // Query Key
 export const getAllTripQueryKey = ['get_all_trips']
+export const getTripByIdQueryKey = (tripId: number) => ['get_trip_by_id', tripId]
 
 // API to get trips
 const getTrips = (): Promise<TripResponseT> =>
@@ -20,6 +21,11 @@ const getTrips = (): Promise<TripResponseT> =>
     url: `/trips`,
   })
 
+const getTripById = (tripId: number): Promise<TripResponseT> =>
+  publicApi({
+    method: 'GET',
+    url: `/trips/${tripId}`,
+  })
 // API to create a trip
 const createTrip = (params: TripParamsType): Promise<TripResponseT> =>
   publicApi({
@@ -42,6 +48,7 @@ const deleteTrip = (tripId: number): Promise<TripResponseT> =>
     method: 'DELETE',
     url: `/trips/${tripId}`,
   })
+
 // hocks
 export const useGetTrips = <TData = TripResponseT, TError = HTTPValidationError>(opts?: {
   query?: Omit<UseQueryOptions<TripResponseT, TError, TData>, 'queryKey' | 'queryFn'>
@@ -95,5 +102,18 @@ export const useDeleteTrip = <TError extends HTTPValidationError>(opts?: {
     onError: (error, variables, context) => {
       opts?.mutation?.onError?.(error, variables, context)
     },
+  })
+}
+
+export const useGetTripById = <TData = TripResponseT, TError = HTTPValidationError>(
+  tripId: number,
+  opts?: {
+    query?: Omit<UseQueryOptions<TripResponseT, TError, TData>, 'queryKey' | 'queryFn'>
+  },
+): UseQueryResult<TData, TError> => {
+  return useQuery({
+    queryKey: getTripByIdQueryKey(tripId),
+    queryFn: () => getTripById(tripId),
+    ...opts?.query,
   })
 }
