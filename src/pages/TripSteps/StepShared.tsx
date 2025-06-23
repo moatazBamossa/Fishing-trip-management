@@ -11,7 +11,7 @@ import {
 type StepSharedProps = {
   title: string
   description: string
-  isActive: boolean
+  isActive?: boolean
   handlePrevious: () => void
   handleNext: () => void
   CaredContent: JSX.Element

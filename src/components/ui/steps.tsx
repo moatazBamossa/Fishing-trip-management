@@ -118,7 +118,7 @@ export function Steps({
                 )}
               </div>
               {step.description && (
-                <div className="text-xs sm:text-sm text-muted-foreground max-w-[150px] sm:max-w-none">
+                <div className="hidden lg:block text-xs sm:text-sm text-muted-foreground max-w-[150px] sm:max-w-none">
                   {step.description}
                 </div>
               )}
