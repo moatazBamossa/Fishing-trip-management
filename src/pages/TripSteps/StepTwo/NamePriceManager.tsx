@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Plus, Trash2 } from 'lucide-react'
 import { useFormState } from 'react-final-form'
+import writtenNumber from 'written-number'
 
 export interface NamePricePair {
   id: string
@@ -20,6 +21,8 @@ interface NamePriceManagerProps {
     price?: string
   }
 }
+
+writtenNumber.defaults.lang = 'ar'
 
 const NamePriceManager = (props: NamePriceManagerProps) => {
   const { values } = useFormState()
@@ -146,11 +149,16 @@ const NamePriceManager = (props: NamePriceManagerProps) => {
           ))}
 
           {pairs.length > 0 && (
-            <div className="flex justify-between items-center pt-4 border-t">
+            <div className="flex gap-2 justify-between items-center pt-4 border-t">
+              <div className="text-lg font-semibold">
+                {new Intl.NumberFormat('ar-YE', {
+                  style: 'currency',
+                  currency: 'YER',
+                }).format(getTotalValue())}
+              </div>
               <span className="text-sm text-muted-foreground">
-                {pairs.length} pair{pairs.length !== 1 ? 's' : ''} total
+                {writtenNumber(getTotalValue())}
               </span>
-              <div className="text-lg font-semibold">Total: ${getTotalValue().toFixed(2)}</div>
             </div>
           )}
         </>
