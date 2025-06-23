@@ -43,14 +43,20 @@ const rowRenderer = (props: RowRendererProps): React.ReactNode => {
         <Button
           size="sm"
           variant="outline"
-          onClick={() => props.handleEdit(trip)}
+          onClick={(e) => {
+            e.stopPropagation()
+            props.handleEdit(trip)
+          }}
         >
           <Edit className="h-4 w-4" />
         </Button>
         <Button
           size="sm"
           variant="outline"
-          onClick={() => props.handleDelete(trip)}
+          onClick={(e) => {
+            e.stopPropagation()
+            props.handleDelete(trip)
+          }}
         >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>

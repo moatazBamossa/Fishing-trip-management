@@ -10,10 +10,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Stepper } from '@/components/ui/steps'
 import StepOne from './StepOne'
+import StepTwo from './StepTwo/StepTwo'
 
 const TripSteps = () => {
   const [activeStep, setActiveStep] = useState(0)
@@ -42,56 +42,14 @@ const TripSteps = () => {
     },
     {
       id: 'step-2',
-      label: 'Address',
-      description: 'Where do you live?',
+      label: 'Expense',
+      description: 'What are you spending money on?',
       icon: <Home className="h-4 w-4 sm:h-5 sm:w-5" />,
       content: (
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle className="text-lg sm:text-xl">Address Information</CardTitle>
-            <CardDescription>Please provide your current address details.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="address">Street Address</Label>
-              <Input
-                id="address"
-                placeholder="Enter your street address"
-              />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  placeholder="City"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="zip">Zip Code</Label>
-                <Input
-                  id="zip"
-                  placeholder="Zip Code"
-                />
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex flex-col sm:flex-row gap-2 sm:justify-between">
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              className="w-full sm:w-auto"
-            >
-              Back
-            </Button>
-            <Button
-              onClick={handleNext}
-              className="w-full sm:w-auto"
-            >
-              Continue
-            </Button>
-          </CardFooter>
-        </Card>
+        <StepTwo
+          handleNext={handleNext}
+          handlePrevious={handlePrevious}
+        />
       ),
     },
     {
@@ -184,7 +142,7 @@ const TripSteps = () => {
 
   return (
     <div className="container mx-auto px-4 py-6 sm:py-10">
-      <div className="mx-auto max-w-xl">
+      <div className="mx-auto max-w-4xl">
         <h1 className="mb-6 sm:mb-8 text-center text-xl sm:text-2xl font-bold">
           Multi-Step Form Example
         </h1>
