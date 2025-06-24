@@ -65,7 +65,7 @@ const sidebarItems = ({ isAdmin, isSuperAdmin }) =>
     { to: '/boats', icon: Sailboat, label: 'Boats' },
     isSuperAdmin && { to: '/organization', icon: Home, label: 'Organization' },
     isAdmin && { to: '/users', icon: Users, label: 'Users' },
-    { to: '/trip', icon: Notebook, label: 'trip' },
+    { to: '/trips', icon: Notebook, label: 'trip' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ].filter(Boolean)
 const Sidebar = (props: SidebarProps) => {

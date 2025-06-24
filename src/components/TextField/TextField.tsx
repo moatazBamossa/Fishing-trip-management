@@ -13,6 +13,7 @@ type TextFieldProps = {
   parse?: <V, R>(value: V, name: string) => R
   type?: HTMLInputTypeAttribute
   required?: boolean
+  icon?: React.ReactNode
 }
 
 const TextField: FC<TextFieldProps> = (props): JSX.Element => {

@@ -10,7 +10,14 @@ interface StepTwoProps {
 
 const StepTwo = (props: StepTwoProps) => {
   // Initial value for the form
-  const initialPairs: NamePricePair[] = []
+  const initialPairs: NamePricePair[] = [
+    {
+      id: Date.now().toString(),
+      category: '',
+      name: '',
+      price: '',
+    },
+  ]
 
   // Form submit handler
   function handleFormSubmit(values: { pairs: NamePricePair[] }) {
@@ -45,7 +52,6 @@ const StepTwo = (props: StepTwoProps) => {
                   <NamePriceManager
                     onChange={(pairs) => form.change('pairs', pairs)}
                     title="Product Pricing"
-                    placeholder={{ name: 'Product name', price: '0.00' }}
                   />
                 </div>
               </div>

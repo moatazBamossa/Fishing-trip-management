@@ -61,11 +61,11 @@ const App = () => (
               element={<Users />}
             />
             <Route
-              path="/trip"
+              path="/trips"
               element={<Trip />}
             />
             <Route
-              path="/trip/:id"
+              path="/trips/:id"
               element={<TripSteps />}
             />
             <Route
