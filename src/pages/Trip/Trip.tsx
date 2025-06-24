@@ -108,7 +108,7 @@ const Trip = () => {
   }
 
   const handelNavigate = (id: number) => {
-    navigate(`/trip/${id}`)
+    navigate(`/trips/${id}`)
   }
 
   return (

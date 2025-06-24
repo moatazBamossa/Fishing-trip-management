@@ -10,6 +10,7 @@ interface TextInputProps {
   placeholder?: string
   error?: string | boolean
   required?: boolean
+  icon?: React.ReactNode
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -21,6 +22,7 @@ const TextInput: React.FC<TextInputProps> = ({
   placeholder,
   error,
   required = false,
+  icon,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -35,6 +37,22 @@ const TextInput: React.FC<TextInputProps> = ({
     // Refocus the input after toggling
     if (inputRef.current) {
       inputRef.current.focus()
+    }
+  }
+
+  const handleNumberInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    // Allow only numbers, decimal point, and backspace
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      onChange(e)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (type === 'number') {
+      handleNumberInput(e)
+    } else {
+      onChange(e)
     }
   }
 
@@ -58,15 +76,17 @@ const TextInput: React.FC<TextInputProps> = ({
               <Lock size={18} />
             )
           ) : (
-            <Mail size={18} />
+            (icon ?? <Mail size={18} />)
           )}
         </div>
         <input
-          type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
+          type={type === 'password' ? (showPassword ? 'text' : 'password') : 'text'}
           id={id}
           name={id}
           value={value}
-          onChange={onChange}
+          {...(type === 'number'
+            ? { onChange: handleNumberInput }
+            : { onChange: handleInputChange })}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           required={required}

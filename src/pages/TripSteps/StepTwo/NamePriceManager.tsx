@@ -1,72 +1,46 @@
-import { useState, useCallback } from 'react'
+import { FC } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Plus, Trash2 } from 'lucide-react'
-import { useFormState } from 'react-final-form'
+import { useFormState, useForm } from 'react-final-form'
 import writtenNumber from 'written-number'
+import TextField from '@/components/TextField'
+import { PcCase, Fish, CircleDollarSign } from 'lucide-react'
 
 export interface NamePricePair {
   id: string
+  category: string
   name: string
   price: string
 }
 
-interface NamePriceManagerProps {
+type NamePriceManagerProps = {
   onChange?: (pairs: NamePricePair[]) => void
   title?: string
-  placeholder?: {
-    name?: string
-    price?: string
-  }
 }
 
 writtenNumber.defaults.lang = 'ar'
 
-const NamePriceManager = (props: NamePriceManagerProps) => {
+const NamePriceManager: FC<NamePriceManagerProps> = (props) => {
   const { values } = useFormState()
-  const { title = 'Name-Price Pairs', placeholder = { name: 'Enter name', price: '0.00' } } = props
-  const [pairs, setPairs] = useState<NamePricePair[]>(
-    values?.pairs.length > 0 ? values.pairs : [{ id: crypto.randomUUID(), name: '', price: '' }],
-  )
-
-  const updatePairs = useCallback(
-    (newPairs: NamePricePair[]) => {
-      setPairs(newPairs)
-      props.onChange?.(newPairs)
-    },
-    [props.onChange],
-  )
+  const { change } = useForm()
+  const { title = 'Name-Price Pairs' } = props
+  const pairs = values.pairs
 
   const addPair = () => {
     const newPair: NamePricePair = {
-      id: crypto.randomUUID(),
+      id: Date.now().toString(),
+      category: '',
       name: '',
       price: '',
     }
-    updatePairs([...pairs, newPair])
+    const updatedPairs = [...pairs, newPair]
+    change('pairs', updatedPairs)
   }
 
   const removePair = (id: string) => {
-    if (pairs.length > 1) {
-      updatePairs(pairs.filter((pair) => pair.id !== id))
-    }
-  }
-
-  const updatePair = (id: string, field: keyof Omit<NamePricePair, 'id'>, value: string) => {
-    updatePairs(pairs.map((pair) => (pair.id === id ? { ...pair, [field]: value } : pair)))
-  }
-
-  const validatePrice = (value: string): boolean => {
-    // Allow empty string, numbers, and decimal numbers
-    return value === '' || /^\d*\.?\d*$/.test(value)
-  }
-
-  const handlePriceChange = (id: string, value: string) => {
-    if (validatePrice(value)) {
-      updatePair(id, 'price', value)
-    }
+    const updatedPairs = pairs.filter((pair: NamePricePair) => pair.id !== id)
+    change('pairs', updatedPairs)
   }
 
   const getTotalValue = (): number => {
@@ -76,7 +50,7 @@ const NamePriceManager = (props: NamePriceManagerProps) => {
     }, 0)
   }
 
-  const hasIncompletePair = pairs.some((pair) => !pair.name || !pair.price)
+  const hasIncompletePair = pairs.some((pair) => !pair.category || !pair.name || !pair.price)
 
   return (
     <Card className="w-full max-w-2xl">
@@ -94,48 +68,32 @@ const NamePriceManager = (props: NamePriceManagerProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <>
-          {pairs.map((pair) => (
+          {pairs.map((pair: NamePricePair) => (
             <div
               key={pair.id}
               className="flex items-end gap-3 p-4 border rounded-lg bg-muted/20"
             >
-              <div className="flex-1 space-y-2">
-                <Label
-                  htmlFor={`name-${pair.id}`}
-                  className="text-sm font-medium"
-                >
-                  Name
-                </Label>
-                <Input
-                  id={`name-${pair.id}`}
-                  type="text"
-                  value={pair.name}
-                  onChange={(e) => updatePair(pair.id, 'name', e.target.value)}
-                  placeholder={placeholder.name}
-                  className="w-full"
-                />
-              </div>
-              <div className="flex-1 space-y-2">
-                <Label
-                  htmlFor={`price-${pair.id}`}
-                  className="text-sm font-medium"
-                >
-                  Price
-                </Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
-                    $
-                  </span>
-                  <Input
-                    id={`price-${pair.id}`}
-                    type="text"
-                    value={pair.price}
-                    onChange={(e) => handlePriceChange(pair.id, e.target.value)}
-                    placeholder={placeholder.price}
-                    className="pl-8"
-                  />
-                </div>
-              </div>
+              <TextField
+                name={`pairs.${pairs.findIndex((p: NamePricePair) => p.id === pair.id)}.category`}
+                label="Category"
+                placeholder="Enter category"
+                icon={<PcCase />}
+              />
+
+              <TextField
+                name={`pairs.${pairs.findIndex((p: NamePricePair) => p.id === pair.id)}.name`}
+                label="Name"
+                placeholder="Enter Name"
+                icon={<Fish />}
+              />
+              <TextField
+                name={`pairs.${pairs.findIndex((p: NamePricePair) => p.id === pair.id)}.price`}
+                label="Price"
+                placeholder="Enter Price"
+                icon={<CircleDollarSign />}
+                type="number"
+              />
+
               <Button
                 onClick={() => removePair(pair.id)}
                 variant="outline"

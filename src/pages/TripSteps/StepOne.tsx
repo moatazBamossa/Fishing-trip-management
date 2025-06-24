@@ -30,7 +30,7 @@ const StepOne = (props: StepOneProps) => {
       select: (response) => response.data,
       throwOnError: (error) => {
         if (error.response?.status === 404) {
-          navigate('/trip')
+          navigate('/trips')
 
           return false
         }
