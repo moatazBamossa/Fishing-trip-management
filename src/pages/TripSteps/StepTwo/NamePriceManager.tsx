@@ -6,17 +6,12 @@ import { useFormState, useForm } from 'react-final-form'
 import writtenNumber from 'written-number'
 import TextField from '@/components/TextField'
 import { PcCase, Fish, CircleDollarSign } from 'lucide-react'
-
-export interface NamePricePair {
-  id: string
-  category: string
-  name: string
-  price: string
-}
+import { TripSuppliesType } from '@/api/tripSupplies/usetripSupplies.type'
 
 type NamePriceManagerProps = {
-  onChange?: (pairs: NamePricePair[]) => void
+  onChange?: (pairs: TripSuppliesType[]) => void
   title?: string
+  handleDeleteTripSupplies?: (id: number) => void
 }
 
 writtenNumber.defaults.lang = 'ar'
@@ -28,66 +23,78 @@ const NamePriceManager: FC<NamePriceManagerProps> = (props) => {
   const pairs = values.pairs
 
   const addPair = () => {
-    const newPair: NamePricePair = {
-      id: Date.now().toString(),
+    const newPair: TripSuppliesType = {
+      id: Date.now(),
       category: '',
       name: '',
-      price: '',
+      cost: '',
     }
     const updatedPairs = [...pairs, newPair]
     change('pairs', updatedPairs)
   }
 
-  const removePair = (id: string) => {
-    const updatedPairs = pairs.filter((pair: NamePricePair) => pair.id !== id)
+  const removePair = (id: number) => {
+    const updatedPairs = pairs.filter((pair: TripSuppliesType) => pair.id !== id)
     change('pairs', updatedPairs)
   }
 
   const getTotalValue = (): number => {
     return pairs.reduce((total, pair) => {
-      const price = Number.parseFloat(pair.price) || 0
+      const price = Number.parseFloat(pair.cost) || 0
       return total + price
     }, 0)
   }
 
-  const hasIncompletePair = pairs.some((pair) => !pair.category || !pair.name || !pair.price)
+  const hasIncompletePair = pairs?.some((pair) => !pair.category || !pair.name || !pair.cost)
 
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-xl font-semibold">{title}</CardTitle>
-        <Button
-          onClick={addPair}
-          size="sm"
-          className="flex items-center gap-2"
-          disabled={hasIncompletePair}
-        >
-          <Plus className="h-4 w-4" />
-          Add Pair
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={addPair}
+            size="sm"
+            className="flex items-center gap-2"
+            disabled={hasIncompletePair}
+          >
+            <Plus className="h-4 w-4" />
+            Add Pair
+          </Button>
+          <Button
+            onClick={() => props.handleDeleteTripSupplies?.(pairs[0].id)}
+            size="sm"
+            className="flex items-center gap-2"
+            type="button"
+            variant="destructive"
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete Pair
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <>
-          {pairs.map((pair: NamePricePair) => (
+          {pairs.map((pair: TripSuppliesType) => (
             <div
               key={pair.id}
               className="flex items-end gap-3 p-4 border rounded-lg bg-muted/20"
             >
               <TextField
-                name={`pairs.${pairs.findIndex((p: NamePricePair) => p.id === pair.id)}.category`}
+                name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.category`}
                 label="Category"
                 placeholder="Enter category"
                 icon={<PcCase />}
               />
 
               <TextField
-                name={`pairs.${pairs.findIndex((p: NamePricePair) => p.id === pair.id)}.name`}
+                name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.name`}
                 label="Name"
                 placeholder="Enter Name"
                 icon={<Fish />}
               />
               <TextField
-                name={`pairs.${pairs.findIndex((p: NamePricePair) => p.id === pair.id)}.price`}
+                name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.cost`}
                 label="Price"
                 placeholder="Enter Price"
                 icon={<CircleDollarSign />}
