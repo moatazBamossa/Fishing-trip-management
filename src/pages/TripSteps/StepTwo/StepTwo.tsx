@@ -1,6 +1,27 @@
 import { Form } from 'react-final-form'
 import StepShared from '../StepShared'
-import NamePriceManager, { NamePricePair } from './NamePriceManager'
+import NamePriceManager from './NamePriceManager'
+import {
+  useCreateTripSupplies,
+  useDeleteTripSupplies,
+  useGetTripSupplies,
+  useUpdateTripSupplies,
+} from '@/api/tripSupplies/usetripSupplies'
+import { useParams } from 'react-router-dom'
+import { TripSuppliesType } from '@/api/tripSupplies/usetripSupplies.type'
+import StepSkeleton from '../StepSkeleton'
+import { toast } from '@/components/ui/use-toast'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog'
+import { useState } from 'react'
 
 // Types
 interface StepTwoProps {
@@ -9,55 +30,123 @@ interface StepTwoProps {
 }
 
 const StepTwo = (props: StepTwoProps) => {
-  // Initial value for the form
-  const initialPairs: NamePricePair[] = [
-    {
-      id: Date.now().toString(),
-      category: '',
-      name: '',
-      price: '',
+  const { id } = useParams()
+
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+
+  const { data: tripSupplies, isLoading: isTripSuppliesLoading } = useGetTripSupplies({
+    id: Number(id),
+    query: {
+      select: (data) => data.data.trip_supplies,
     },
-  ]
+  })
+
+  const { mutate: createTripSupplies } = useCreateTripSupplies(Number(id))
+
+  const { mutate: updateTripSupplies } = useUpdateTripSupplies(Number(id))
+
+  const { mutate: deleteTripSupplies } = useDeleteTripSupplies(Number(id), {
+    mutation: {
+      onSuccess: () => {
+        toast({
+          variant: 'success',
+          title: 'Trip supplies deleted successfully',
+        })
+      },
+    },
+  })
+
+  const handleCreateTripSupplies = (values: { pairs: TripSuppliesType[] }) => {
+    createTripSupplies(values.pairs, {
+      onSuccess: () => {
+        toast({
+          variant: 'success',
+          title: 'Trip supplies created successfully',
+        })
+        props.handleNext()
+      },
+    })
+  }
+
+  // Initial value for the form
+  const initialPairs: TripSuppliesType[] = tripSupplies
 
   // Form submit handler
-  function handleFormSubmit(values: { pairs: NamePricePair[] }) {
-    // Filter out empty pairs
-    const validPairs = (values.pairs || []).filter((pair) => pair.name.trim() && pair.price.trim())
+  const handleFormSubmit = (values: { pairs: TripSuppliesType[] }) => {
+    if (tripSupplies?.length) return updateTripSupplies(values.pairs)
+    handleCreateTripSupplies(values)
+  }
 
-    console.log('Submitted pairs:', validPairs)
-    props.handleNext()
+  const handleOpenDeleteDialog = () => {
+    setShowDeleteDialog(true)
+  }
+
+  const handleDeleteTripSupplies = () => {
+    deleteTripSupplies()
+    setShowDeleteDialog(false)
   }
 
   return (
     <Form
-      initialValues={{ pairs: initialPairs }}
+      initialValues={{ pairs: initialPairs ?? [] }}
       onSubmit={handleFormSubmit}
       render={({ handleSubmit, form, dirty }) => (
-        <StepShared
-          title="Expense information"
-          description="Please provide your expense information."
-          handleNext={() => {
-            if (dirty) return handleSubmit()
-            props.handleNext()
-          }}
-          handlePrevious={props.handlePrevious}
-          CaredContent={
-            <form
-              className="space-y-6"
-              noValidate
-              onSubmit={handleSubmit}
-            >
-              <div className="bg-background p-6">
-                <div className="max-w-xl mx-auto space-y-6">
-                  <NamePriceManager
-                    onChange={(pairs) => form.change('pairs', pairs)}
-                    title="Product Pricing"
-                  />
+        <>
+          <StepShared
+            title="Expense information"
+            description="Please provide your expense information."
+            handleNext={() => {
+              if (dirty) return handleSubmit()
+              props.handleNext()
+            }}
+            handlePrevious={props.handlePrevious}
+            CaredContent={
+              <form
+                className="space-y-6"
+                noValidate
+                onSubmit={handleSubmit}
+              >
+                <div className="bg-background p-6">
+                  <div className="max-w-xl mx-auto space-y-6">
+                    {isTripSuppliesLoading ? (
+                      <StepSkeleton />
+                    ) : (
+                      <NamePriceManager
+                        onChange={(pairs) => form.change('pairs', pairs)}
+                        title="Product Pricing"
+                        handleDeleteTripSupplies={handleOpenDeleteDialog}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            </form>
-          }
-        />
+              </form>
+            }
+          />
+          <Dialog
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}
+          >
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to delete This action cannot be undone.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                  onClick={handleDeleteTripSupplies}
+                  variant="destructive"
+                >
+                  Delete Trip Supplies
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </>
       )}
     />
   )
