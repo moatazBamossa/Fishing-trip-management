@@ -69,6 +69,11 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+
         'accordion-down': {
           from: {
             height: '0',
@@ -95,6 +100,7 @@ export default {
         },
       },
       animation: {
+        fadeIn: 'fadeIn 0.5s ease-out forwards',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'spinner-leaf-fade': 'spinner-leaf-fade 800ms linear infinite',

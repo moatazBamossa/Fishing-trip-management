@@ -24,10 +24,9 @@ const NamePriceManager: FC<NamePriceManagerProps> = (props) => {
 
   const addPair = () => {
     const newPair: TripSuppliesType = {
-      id: Date.now(),
       category: '',
-      name: '',
-      cost: '',
+      note: '',
+      amount: '',
     }
     const updatedPairs = [...pairs, newPair]
     change('pairs', updatedPairs)
@@ -40,12 +39,12 @@ const NamePriceManager: FC<NamePriceManagerProps> = (props) => {
 
   const getTotalValue = (): number => {
     return pairs.reduce((total, pair) => {
-      const price = Number.parseFloat(pair.cost) || 0
+      const price = Number.parseFloat(pair.amount) || 0
       return total + price
     }, 0)
   }
 
-  const hasIncompletePair = pairs?.some((pair) => !pair.category || !pair.name || !pair.cost)
+  const hasIncompletePair = pairs?.some((pair) => !pair.category || !pair.name || !pair.amount)
 
   return (
     <Card className="w-full max-w-2xl">
@@ -61,7 +60,7 @@ const NamePriceManager: FC<NamePriceManagerProps> = (props) => {
             <Plus className="h-4 w-4" />
             Add Pair
           </Button>
-          <Button
+          {/* <Button
             onClick={() => props.handleDeleteTripSupplies?.(pairs[0].id)}
             size="sm"
             className="flex items-center gap-2"
@@ -70,7 +69,8 @@ const NamePriceManager: FC<NamePriceManagerProps> = (props) => {
           >
             <Trash2 className="h-4 w-4" />
             Delete Pair
-          </Button>
+            // TODO: add delete pair
+          </Button> */}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -80,26 +80,38 @@ const NamePriceManager: FC<NamePriceManagerProps> = (props) => {
               key={pair.id}
               className="flex items-end gap-3 p-4 border rounded-lg bg-muted/20"
             >
-              <TextField
-                name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.category`}
-                label="Category"
-                placeholder="Enter category"
-                icon={<PcCase />}
-              />
+              <div className="flex flex-col gap-3">
+                <div className="flex  gap-3">
+                  <TextField
+                    name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.category`}
+                    label="Category"
+                    placeholder="Enter category"
+                    icon={<PcCase />}
+                  />
 
-              <TextField
-                name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.name`}
-                label="Name"
-                placeholder="Enter Name"
-                icon={<Fish />}
-              />
-              <TextField
-                name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.cost`}
-                label="Price"
-                placeholder="Enter Price"
-                icon={<CircleDollarSign />}
-                type="number"
-              />
+                  <TextField
+                    name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.name`}
+                    label="Name"
+                    placeholder="Enter Name"
+                    icon={<Fish />}
+                  />
+
+                  <TextField
+                    name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.amount`}
+                    label="Amount"
+                    placeholder="Enter Amount"
+                    icon={<CircleDollarSign />}
+                    type="number"
+                  />
+                </div>
+
+                <TextField
+                  name={`pairs.${pairs.findIndex((p: TripSuppliesType) => p.id === pair.id)}.note`}
+                  label="Note"
+                  placeholder="Enter Note"
+                  icon={<Fish />}
+                />
+              </div>
 
               <Button
                 onClick={() => removePair(pair.id)}
