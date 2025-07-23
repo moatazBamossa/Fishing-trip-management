@@ -37,7 +37,7 @@ const StepTwo = (props: StepTwoProps) => {
   const { data: tripSupplies, isLoading: isTripSuppliesLoading } = useGetTripSupplies({
     id: Number(id),
     query: {
-      select: (data) => data.data.trip_supplies,
+      select: (data) => data.data.trip_expenses,
     },
   })
 

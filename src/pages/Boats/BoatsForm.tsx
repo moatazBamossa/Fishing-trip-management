@@ -70,16 +70,30 @@ const BoatsForm = (props: BoatFormProps) => {
             </DialogHeader>
 
             <div className="flex flex-col gap-4">
-              <TextField
-                name="name"
-                label="name boat"
-                className="col-span-3"
-              />
-              <TextField
-                name="owner"
-                label="owner"
-                className="col-span-3"
-              />
+              <div className="flex gap-2">
+                <TextField
+                  name="name"
+                  label="name boat"
+                  className="col-span-3"
+                />
+                <TextField
+                  name="model"
+                  label="model"
+                  className="col-span-3"
+                />
+              </div>
+              <div className="flex gap-2">
+                <TextField
+                  name="owner"
+                  label="owner"
+                  className="col-span-3"
+                />
+                <TextField
+                  name="year_built"
+                  label="year build"
+                  className="col-span-3"
+                />
+              </div>
               <div className="flex gap-2  items-center">
                 <TextField
                   name="registration_number"
@@ -100,18 +114,20 @@ const BoatsForm = (props: BoatFormProps) => {
                         {...input}
                         className="col-span-3 flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       >
-                        <option value="user">Owner</option>
-                        <option value="admin">Rental</option>
+                        <option value="owned">Owner</option>
+                        <option value="rented">Rental</option>
                       </select>
                     </div>
                   )}
                 </Field>
               </div>
-              <TextField
-                name="capacity"
-                label="capacity"
-                className="col-span-3"
-              />
+              <div className="flex gap-2">
+                <TextField
+                  name="capacity"
+                  label="capacity"
+                  className="col-span-3"
+                />
+              </div>
             </div>
 
             <DialogFooter>

@@ -3,6 +3,8 @@ import TextField from '@/components/TextField'
 import NewCalenderFiled from '@/components/ui/NewCalenderFiled'
 import { Field, FieldRenderProps, useForm, useFormState } from 'react-final-form'
 import { useGetBoats } from '@/api/Boats/useBoats'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 
 const TripContent = () => {
   const { change } = useForm()
@@ -45,34 +47,6 @@ const TripContent = () => {
         />
       </div>
 
-      <div className="flex gap-2 items-center justify-between">
-        <TextField
-          name="base_cost"
-          label="Base Cost"
-          type="number"
-          className="col-span-3"
-        />
-
-        <Field
-          name="boat_id"
-          validate={(value: string) => (value ? undefined : 'Boat is required')}
-        >
-          {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
-            <Combobox
-              options={boats?.map((boat) => ({
-                value: String(boat.id),
-                label: boat.name,
-              }))}
-              value={String(input?.value)}
-              onChange={input.onChange}
-              placeholder="Choose a Boat"
-              className="h-12 mt-6"
-              disabled={loading || fetching}
-            />
-          )}
-        </Field>
-      </div>
-
       <div className="flex gap-2 justify-between items-center">
         <TextField
           name="form"
@@ -84,6 +58,64 @@ const TripContent = () => {
           label="To"
           className="col-span-3"
         />
+      </div>
+
+      <div className="flex gap-3 flex-col">
+        <Field
+          name="boat_id"
+          validate={(value: string) => (value ? undefined : 'Boat is required')}
+        >
+          {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
+            <Combobox
+              options={boats?.map((boat) => ({
+                value: String(boat.id),
+                label: boat.name,
+              }))}
+              value={String(input?.value)}
+              onChange={(value) => {
+                input.onChange(value)
+
+                const isRentedBoat = !!boats?.find(
+                  (boat) => boat.rental_status === 'rented' && boat.id === Number(value),
+                )
+                change('is_rental_field', isRentedBoat)
+              }}
+              placeholder="Choose a Boat"
+              className="h-12 mt-6"
+              disabled={loading || fetching}
+            />
+          )}
+        </Field>
+        <div className="flex flex-col gap-2 mt-4">
+          <Field
+            name="is_rental_field"
+            validate={(value: boolean) => (value ? undefined : 'Rental is required')}
+          >
+            {({ input }: FieldRenderProps<boolean, HTMLElement>): JSX.Element => (
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id="is_rental"
+                  checked={input.value}
+                  onCheckedChange={(checked) => {
+                    input.onChange(checked)
+                    change('is_rental_field', checked)
+                  }}
+                />
+                <Label htmlFor="is_rental">Rental</Label>
+              </div>
+            )}
+          </Field>
+          {values.is_rental_field && (
+            <div className="col-span-3 transition-all duration-500 ease-out opacity-0 animate-fadeIn">
+              <TextField
+                name="rental_boat_cost"
+                label="Base Rental Cost"
+                type="number"
+                className="w-full"
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

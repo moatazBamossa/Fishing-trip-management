@@ -20,8 +20,18 @@ export const getTripSuppliesByIdQueryKey = (id: number, tripSuppliesId: number) 
 const getTripSupplies = (id: number): Promise<TripSuppliesResponseT> =>
   publicApi({
     method: 'GET',
-    url: `/trips/${id}/trip_supplies`,
+    url: `/trips/${id}/trip_expenses`,
   })
+
+// const createTripSupplies = (
+//   id: number,
+//   params: TripSuppliesType[],
+// ): Promise<TripSuppliesResponseT> =>
+//   publicApi({
+//     method: 'POST',
+//     url: `/trips/${id}/trip_expenses`,
+//     data: { trip_expense: params },
+//   })
 
 const createTripSupplies = (
   id: number,
@@ -29,24 +39,23 @@ const createTripSupplies = (
 ): Promise<TripSuppliesResponseT> =>
   publicApi({
     method: 'POST',
-    url: `/trips/${id}/trip_supplies`,
-    params: { trip_supply: params[0] },
+    url: `/trips/${id}/trip_expenses`,
+    data: { trip_expense: params },
   })
-
 const updateTripSupplies = (
   id: number,
   params: TripSuppliesType[],
 ): Promise<TripSuppliesResponseT> =>
   publicApi({
     method: 'PUT',
-    url: `/trips/${id}/trip_supplies/${params[0].id}`,
-    params: { trip_supply: params[0] },
+    url: `/trips/${id}/trip_expenses`,
+    data: { trip_expenses: params },
   })
 
 const deleteTripSupplies = (id: number): Promise<TripSuppliesResponseT> =>
   publicApi({
     method: 'DELETE',
-    url: `/trips/${id}/trip_supplies`,
+    url: `/trips/${id}/trip_expenses`,
   })
 
 export const useGetTripSupplies = <

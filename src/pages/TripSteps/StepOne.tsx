@@ -38,7 +38,7 @@ const StepOne = (props: StepOneProps) => {
       },
     },
   })
-
+  console.log('trip', trip)
   const { mutate: updateTrip, isPending: updating } = useUpdateTrip()
 
   const handelOnSubmit = (val: TripParamsType) => {
@@ -50,7 +50,7 @@ const StepOne = (props: StepOneProps) => {
   }
   return (
     <Form
-      initialValues={trip}
+      initialValues={{ ...trip, is_rental_field: !!Number(trip?.rental_boat_cost) }}
       onSubmit={handelOnSubmit}
     >
       {({ values, dirty }): JSX.Element => (

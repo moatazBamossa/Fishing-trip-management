@@ -4,11 +4,11 @@ export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
 
 export type DataType = Record<string, unknown>
 
-interface RequestOptions<T = unknown> {
+interface RequestOptions {
   method: Method
   url: string
   params?: DataType
-  data?: T
+  data?: DataType
 }
 
 export const publicApi = async <T = unknown>({
@@ -16,7 +16,7 @@ export const publicApi = async <T = unknown>({
   url,
   params,
   data,
-}: RequestOptions<T>): Promise<T> => {
+}: RequestOptions): Promise<T> => {
   const response = await api.request<T>({
     method,
     url,
