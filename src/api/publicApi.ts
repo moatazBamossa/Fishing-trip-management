@@ -1,8 +1,16 @@
 import api from './axios'
 
-export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE'
+export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 
 export type DataType = Record<string, unknown>
+
+export type GetParamsType = {
+  filters?: {
+    search?: string
+  }
+  limit?: number
+  page?: number
+}
 
 interface RequestOptions {
   method: Method

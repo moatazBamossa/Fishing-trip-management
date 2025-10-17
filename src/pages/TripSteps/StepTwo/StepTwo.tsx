@@ -41,6 +41,8 @@ const StepTwo = (props: StepTwoProps) => {
     },
   })
 
+  const uniqueCategories = [...new Set(tripSupplies?.map((c) => c.category))]
+  console.log('uniqueCategories', uniqueCategories)
   const { mutate: createTripSupplies } = useCreateTripSupplies(Number(id))
 
   const { mutate: updateTripSupplies } = useUpdateTripSupplies(Number(id))

@@ -20,7 +20,7 @@ import { Form } from 'react-final-form'
 
 type OrganizationFormProps = {
   initialValue: OrganizationType | null
-  handelCloseDialog: () => void
+  handleCloseDialog: () => void
 }
 
 const OrganizationForm = (props: OrganizationFormProps) => {
@@ -32,8 +32,8 @@ const OrganizationForm = (props: OrganizationFormProps) => {
   const { mutate: updateOrganization, isPending: pending } = useUpdateOrganization()
 
   const handelSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: getAllOrganizations })
-    props.handelCloseDialog()
+    queryClient.invalidateQueries({ queryKey: [getAllOrganizations()[0]] })
+    props.handleCloseDialog()
   }
 
   const textBTN = initialValue?.name ? 'Update' : 'Add'

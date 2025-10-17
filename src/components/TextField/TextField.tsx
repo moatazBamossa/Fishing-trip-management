@@ -14,6 +14,7 @@ type TextFieldProps = {
   type?: HTMLInputTypeAttribute
   required?: boolean
   icon?: React.ReactNode
+  autoComplete?: string
 }
 
 const TextField: FC<TextFieldProps> = (props): JSX.Element => {

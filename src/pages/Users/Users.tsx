@@ -1,24 +1,8 @@
 import { useMemo, useState } from 'react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+import { TableCell, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-  DialogClose,
-} from '@/components/ui/dialog'
 
-import { UserPlus, Edit, Trash2, ArrowBigLeft } from 'lucide-react'
+import { UserPlus, Edit, Trash2 } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
@@ -29,51 +13,132 @@ import {
   useDeleteOrgUser,
   useGetOrgUsers,
 } from '@/api/OrgUsers/useOrgUsers'
-import TableSkeleton from '../../components/ui/TableSkeleton'
 import { useQueryClient } from '@tanstack/react-query'
 import { getAllUsersQueryKey, useDeleteUser, useGetUsers } from '@/api/Users/useUsers'
+
+import Shared, { RowRendererProps } from '../shared/Shared'
+
+const columns = [
+  { key: 'id', title: 'ID' },
+  { key: 'Name', title: 'Name' },
+  { key: 'Email', title: 'Email' },
+  { key: 'Number', title: 'Number' },
+  { key: 'Role', title: 'Role' },
+
+  { key: 'actions', title: 'Actions', className: 'text-right' },
+]
+
+const rowRenderer = (props: RowRendererProps<UserType>): React.ReactNode => {
+  const { data: user } = props
+  return (
+    <TableRow
+      key={user.id_card_number}
+      className="animate-fade-in hover:bg-gray-50 transition-colors duration-200"
+      onClick={props?.handleNavigate}
+    >
+      <TableCell>{user.id_card_number}</TableCell>
+      <TableCell>{user.full_name}</TableCell>
+      <TableCell>{user.email}</TableCell>
+      <TableCell>{user.phone}</TableCell>
+      <TableCell>{user.role}</TableCell>
+      <TableCell className="text-right space-x-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            props.handleEditClick(user)
+          }}
+          className="hover:bg-gray-100"
+        >
+          <Edit className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation()
+            props.handleDeleteClick(user)
+          }}
+          className="hover:bg-gray-100"
+        >
+          <Trash2 className="h-4 w-4 text-destructive" />
+        </Button>
+      </TableCell>
+    </TableRow>
+  )
+}
 
 const Users = () => {
   const { id } = useParams<{ id: string }>()
   const queryClient = useQueryClient()
 
-  const {
-    data: orgUsers,
-    isLoading,
-    isFetching,
-  } = useGetOrgUsers(+id, {
-    query: {
-      select: (response) => response.data.users,
-      enabled: !!+id,
-    },
-  })
-
-  const {
-    data: users,
-    isLoading: loading,
-    isFetching: fetching,
-  } = useGetUsers({
-    query: {
-      select: (response) => response.data.users,
-      enabled: !+id,
-    },
-  })
-
-  const allUsers = useMemo(() => (+id ? orgUsers : users), [id, orgUsers, users])
-  const { mutate: deleteOrgUser, isPending: pending } = useDeleteOrgUser(+id)
-  const { mutate: deleteUser, isPending } = useDeleteUser()
+  const { mutate: deleteOrgUser, isPending: orgDeletePending } = useDeleteOrgUser(+id)
+  const { mutate: deleteUser, isPending: userDeletePending } = useDeleteUser()
   const [showDialog, setShowDialog] = useState(false)
-
+  // const [page, setPage] = useState(1)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [page, setPage] = useState(1)
 
   const navigate = useNavigate()
 
   const { toast } = useToast()
 
+  const {
+    data: orgData,
+    isLoading,
+    isFetching,
+  } = useGetOrgUsers(
+    +id,
+    {
+      limit: 10,
+      page,
+      filters: {
+        search: searchQuery,
+      },
+    },
+    {
+      query: {
+        select: (response) => response.data,
+        enabled: !!+id,
+      },
+    },
+  )
+  const {
+    data,
+    isLoading: loading,
+    isFetching: fetching,
+  } = useGetUsers(
+    {
+      limit: 10,
+      page: 1,
+      filters: {
+        search: searchQuery,
+      },
+    },
+    {
+      query: {
+        select: (response) => response.data,
+        enabled: !+id,
+      },
+    },
+  )
+
+  const { meta, users } = data || {}
+  const { meta: orgMeta, users: orgUsers } = orgData || {}
+
+  const allUsers = useMemo(() => (+id ? orgUsers : users), [id, orgUsers, users])
+
   // Open edit dialog
   const handleEditClick = (user) => {
     setSelectedUser(user)
+    setShowDialog(true)
+  }
+
+  const addNew = () => {
+    setSelectedUser(null)
     setShowDialog(true)
   }
 
@@ -109,125 +174,50 @@ const Users = () => {
     deleteUser(selectedUser.id, {
       onSuccess: () => {
         setShowDeleteDialog(false)
-        queryClient.invalidateQueries({ queryKey: getAllUsersQueryKey })
+        queryClient.invalidateQueries({
+          queryKey: [getAllUsersQueryKey()[0]], // Just the string part
+        })
       },
     })
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex gap-2 justify-center items-center">
-          {id && (
-            <ArrowBigLeft
-              size={30}
-              onClick={() => navigate(-1)}
-            />
-          )}
-          <h1 className="text-3xl font-bold">Users</h1>
-        </div>
-        <Button
-          onClick={() => setShowDialog(true)}
-          className="animate-fade-in"
-        >
-          <UserPlus className="mr-2 h-4 w-4" />
-          Add User
-        </Button>
-      </div>
-
-      <div className="border rounded-md">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Number</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading || isFetching || loading || fetching ? (
-              <TableSkeleton rowCount={3} />
-            ) : (
-              allUsers?.map((user) => (
-                <TableRow
-                  key={user.id_card_number}
-                  className="animate-fade-in"
-                >
-                  <TableCell>{user.id_card_number}</TableCell>
-                  <TableCell>{user.full_name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEditClick(user)}
-                      className="hover:bg-gray-100"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDeleteClick(user)}
-                      className="hover:bg-gray-100"
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Add User Dialog */}
-      <Dialog
-        open={showDialog}
-        onOpenChange={(open) => {
-          setShowDialog(open)
-          if (!open) handelCloseDialog()
-        }}
-      >
+    <Shared
+      title="Users"
+      isBackButton={!!+id}
+      onBackButtonClicked={() => navigate(-1)}
+      skeletonCount={7}
+      NewIcon={UserPlus}
+      addNew={addNew}
+      SharedForm={() => (
         <UsersForm
           handelCloseDialog={handelCloseDialog}
           initialValue={selectedUser}
           organizationId={+id}
         />
-      </Dialog>
-
-      <Dialog
-        open={showDeleteDialog}
-        onOpenChange={setShowDeleteDialog}
-      >
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete {selectedUser?.full_name}? This action cannot be
-              undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button
-              onClick={handleDeleteUser}
-              variant="destructive"
-              disabled={pending || isPending}
-            >
-              Delete User
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+      )}
+      isFetching={loading || fetching || isFetching || isLoading}
+      data={allUsers}
+      columns={columns}
+      rowRenderer={(user: UserType) =>
+        rowRenderer({
+          data: user,
+          handleEditClick,
+          handleDeleteClick,
+          handleNavigate: () => handleEditClick(user),
+        })
+      }
+      setSearchQuery={setSearchQuery}
+      showDialog={showDialog}
+      setShowDialog={setShowDialog}
+      handelCloseDialog={() => {}}
+      showDeleteDialog={showDeleteDialog}
+      setShowDeleteDialog={setShowDeleteDialog}
+      handleDeleteUser={handleDeleteUser}
+      isDeletingPending={orgDeletePending || userDeletePending}
+      pagination={+id ? meta?.pagination : orgMeta?.pagination}
+      setPage={setPage}
+    />
   )
 }
 

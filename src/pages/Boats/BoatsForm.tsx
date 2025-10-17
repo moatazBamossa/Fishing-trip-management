@@ -13,10 +13,10 @@ import { Label } from '@/components/ui/label'
 import { useQueryClient } from '@tanstack/react-query'
 import LoadingSVG from '@/components/ui/LoadingSVG'
 import { getAllBoatsQueryKey, useCreateBoat, useUpdateBoats } from '@/api/Boats/useBoats'
-import { BoatParamsType } from '@/api/Boats/useBoats.type'
+import { BoatParamsType, BoatType } from '@/api/Boats/useBoats.type'
 
 type BoatFormProps = {
-  initialValue: BoatParamsType | null
+  initialValue: BoatType | null
   handelCloseDialog: () => void
 }
 
@@ -31,7 +31,7 @@ const BoatsForm = (props: BoatFormProps) => {
   const { mutate: updateBoat, isPending: updatePending } = useUpdateBoats()
 
   const handelSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: getAllBoatsQueryKey })
+    queryClient.invalidateQueries({ queryKey: [getAllBoatsQueryKey()[0]] })
     props.handelCloseDialog()
   }
 
@@ -53,6 +53,7 @@ const BoatsForm = (props: BoatFormProps) => {
       onSuccess: handelSuccess,
     })
   }
+  console.log(initialValue)
   return (
     <Form
       initialValues={initialValue}

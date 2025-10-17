@@ -20,6 +20,10 @@ export type BoatParamsType = {
   capacity: number
   registration_number: string
   owner: string
+  type?: string
+  rpp?: number
+  page?: number
+  search?: string
 }
 
 type BoatsTypeResponse = {
