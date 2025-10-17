@@ -47,7 +47,7 @@ const updateTripSupplies = (
   params: TripSuppliesType[],
 ): Promise<TripSuppliesResponseT> =>
   publicApi({
-    method: 'PUT',
+    method: 'PATCH',
     url: `/trips/${id}/trip_expenses`,
     data: { trip_expenses: params },
   })

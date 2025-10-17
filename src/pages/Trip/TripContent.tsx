@@ -13,11 +13,14 @@ const TripContent = () => {
     data: boats,
     isLoading: loading,
     isFetching: fetching,
-  } = useGetBoats({
-    query: {
-      select: (response) => response.data.boats,
+  } = useGetBoats(
+    {},
+    {
+      query: {
+        select: (response) => response.data.boats,
+      },
     },
-  })
+  )
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,35 +64,43 @@ const TripContent = () => {
       </div>
 
       <div className="flex gap-3 flex-col">
-        <Field
-          name="boat_id"
-          validate={(value: string) => (value ? undefined : 'Boat is required')}
-        >
-          {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
-            <Combobox
-              options={boats?.map((boat) => ({
-                value: String(boat.id),
-                label: boat.name,
-              }))}
-              value={String(input?.value)}
-              onChange={(value) => {
-                input.onChange(value)
+        <div className="flex gap-2 items-center justify-between">
+          <Field
+            name="boat_id"
+            validate={(value: string) => (value ? undefined : 'Boat is required')}
+          >
+            {({ input }: FieldRenderProps<string, HTMLElement>): JSX.Element => (
+              <Combobox
+                options={boats?.map((boat) => ({
+                  value: String(boat.id),
+                  label: boat.name,
+                }))}
+                value={String(input?.value)}
+                onChange={(value) => {
+                  input.onChange(value)
 
-                const isRentedBoat = !!boats?.find(
-                  (boat) => boat.rental_status === 'rented' && boat.id === Number(value),
-                )
-                change('is_rental_field', isRentedBoat)
-              }}
-              placeholder="Choose a Boat"
-              className="h-12 mt-6"
-              disabled={loading || fetching}
-            />
-          )}
-        </Field>
+                  const isRentedBoat = !!boats?.find(
+                    (boat) => boat.rental_status === 'rented' && boat.id === Number(value),
+                  )
+                  change('is_rental_field', isRentedBoat)
+                }}
+                placeholder="Choose a Boat"
+                className="h-12 mt-6"
+                disabled={loading || fetching}
+              />
+            )}
+          </Field>
+          <TextField
+            name="crew_count"
+            label="Number of Crew"
+            className="col-span-3"
+          />
+        </div>
+
         <div className="flex flex-col gap-2 mt-4">
           <Field
             name="is_rental_field"
-            validate={(value: boolean) => (value ? undefined : 'Rental is required')}
+            // validate={(value: boolean) => (value ? undefined : 'Rental is required')}
           >
             {({ input }: FieldRenderProps<boolean, HTMLElement>): JSX.Element => (
               <div className="flex items-center gap-3">

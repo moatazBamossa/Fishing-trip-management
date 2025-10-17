@@ -8,20 +8,21 @@ import {
 } from '@tanstack/react-query'
 
 import { HTTPValidationError } from '../apiType.type'
-import { publicApi } from '../publicApi'
+import { GetParamsType, publicApi } from '../publicApi'
 import {
   OrganizationResponseT,
   OrganizationsResponseT,
   OrganizationType,
 } from './useOrganiztion.type'
 import { toast } from '@/components/ui/use-toast'
-export const getAllOrganizations = ['get_all_organizations']
+export const getAllOrganizations = (params?: GetParamsType) => ['get_all_organizations', params]
 
 // API Functions
-const getOrganizations = (): Promise<OrganizationsResponseT> =>
+const getOrganizations = (params?: GetParamsType): Promise<OrganizationsResponseT> =>
   publicApi({
     method: 'GET',
     url: '/dashboard/organizations/',
+    params,
   })
 
 const createOrganization = (params: OrganizationType): Promise<OrganizationResponseT> =>
@@ -47,12 +48,16 @@ const deleteOrganization = (id: number): Promise<OrganizationResponseT> =>
 export const useGetOrganizations = <
   TData = OrganizationsResponseT,
   TError = HTTPValidationError,
->(opts?: {
-  query?: Omit<UseQueryOptions<OrganizationsResponseT, TError, TData>, 'queryKey' | 'queryFn'>
-}): UseQueryResult<TData, TError> => {
+  TParams = GetParamsType,
+>(
+  params?: TParams,
+  opts?: {
+    query?: Omit<UseQueryOptions<OrganizationsResponseT, TError, TData>, 'queryKey' | 'queryFn'>
+  },
+): UseQueryResult<TData, TError> => {
   return useQuery({
-    queryKey: getAllOrganizations, // Default query key
-    queryFn: getOrganizations, // Direct reference to the function
+    queryKey: getAllOrganizations(params), // Default query key
+    queryFn: () => getOrganizations(params), // Direct reference to the function
     ...opts?.query, // Spread any additional options
   })
 }
@@ -75,7 +80,7 @@ export const useCreateOrganization = <TError extends HTTPValidationError>(opts?:
       toast({
         title: 'create organization failed',
         description: error?.response?.data?.error || 'Invalid credentials.',
-        variant: 'destructive',
+        variant: 'success',
       })
       opts?.mutation?.onError?.(error, variables, context)
     },

@@ -7,19 +7,20 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import { HTTPValidationError } from '../apiType.type'
-import { publicApi } from '../publicApi'
+import { GetParamsType, publicApi } from '../publicApi'
 import { UsersResponseT } from './useUsers.type'
 import { UserType } from '../OrgUsers/useOrgUsers.type'
 
-export const getAllUsersQueryKey = ['get_all_users']
+export const getAllUsersQueryKey = (params?: GetParamsType) => ['get_all_users', params]
 
-const getUsers = (): Promise<UsersResponseT> =>
+const getUsers = (params?: GetParamsType): Promise<UsersResponseT> =>
   publicApi({
     method: 'GET',
     url: `/users`,
+    params,
   })
 
-const createUsers = (params: UserType): Promise<UsersResponseT> =>
+const createUsers = (params?: UserType): Promise<UsersResponseT> =>
   publicApi({
     method: 'POST',
     url: '/users',
@@ -41,12 +42,15 @@ const deleteUsers = (userId: number): Promise<UsersResponseT> =>
     url: `/users/${userId}`,
   })
 
-export const useGetUsers = <TData = UsersResponseT, TError = HTTPValidationError>(opts?: {
-  query?: Omit<UseQueryOptions<UsersResponseT, TError, TData>, 'queryKey' | 'queryFn'>
-}): UseQueryResult<TData, TError> => {
+export const useGetUsers = <TData = UsersResponseT, TError = HTTPValidationError>(
+  params?: GetParamsType,
+  opts?: {
+    query?: Omit<UseQueryOptions<UsersResponseT, TError, TData>, 'queryKey' | 'queryFn'>
+  },
+): UseQueryResult<TData, TError> => {
   return useQuery({
-    queryKey: getAllUsersQueryKey,
-    queryFn: () => getUsers(),
+    queryKey: getAllUsersQueryKey(params),
+    queryFn: () => getUsers(params),
     ...opts?.query,
   })
 }

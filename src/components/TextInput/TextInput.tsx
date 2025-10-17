@@ -11,6 +11,7 @@ interface TextInputProps {
   error?: string | boolean
   required?: boolean
   icon?: React.ReactNode
+  autoComplete?: string
 }
 
 const TextInput: React.FC<TextInputProps> = ({
@@ -23,6 +24,7 @@ const TextInput: React.FC<TextInputProps> = ({
   error,
   required = false,
   icon,
+  autoComplete,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -84,6 +86,7 @@ const TextInput: React.FC<TextInputProps> = ({
           id={id}
           name={id}
           value={value}
+          autoComplete={autoComplete}
           {...(type === 'number'
             ? { onChange: handleNumberInput }
             : { onChange: handleInputChange })}

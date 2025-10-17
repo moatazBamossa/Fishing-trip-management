@@ -6,19 +6,20 @@ import {
   UseQueryOptions,
   UseQueryResult,
 } from '@tanstack/react-query'
-import { publicApi } from '../publicApi'
+import { GetParamsType, publicApi } from '../publicApi'
 import { TripParamsType, TripResponseT, TripsResponseT } from './useTrip.trip'
 import { HTTPValidationError } from '../apiType.type'
 
 // Query Key
-export const getAllTripQueryKey = ['get_all_trips']
+export const getAllTripQueryKey = (params?: GetParamsType) => ['get_all_trips', params]
 export const getTripByIdQueryKey = (tripId: number) => ['get_trip_by_id', tripId]
 
 // API to get trips
-const getTrips = (): Promise<TripsResponseT> =>
+const getTrips = (params?: GetParamsType): Promise<TripsResponseT> =>
   publicApi({
     method: 'GET',
     url: `/trips`,
+    params,
   })
 
 const getTripById = (tripId: number): Promise<TripResponseT> =>
@@ -50,12 +51,15 @@ const deleteTrip = (tripId: number): Promise<TripsResponseT> =>
   })
 
 // hocks
-export const useGetTrips = <TData = TripsResponseT, TError = HTTPValidationError>(opts?: {
-  query?: Omit<UseQueryOptions<TripsResponseT, TError, TData>, 'queryKey' | 'queryFn'>
-}): UseQueryResult<TData, TError> => {
+export const useGetTrips = <TData = TripsResponseT, TError = HTTPValidationError>(
+  params?: GetParamsType,
+  opts?: {
+    query?: Omit<UseQueryOptions<TripsResponseT, TError, TData>, 'queryKey' | 'queryFn'>
+  },
+): UseQueryResult<TData, TError> => {
   return useQuery({
-    queryKey: getAllTripQueryKey,
-    queryFn: getTrips,
+    queryKey: getAllTripQueryKey(params),
+    queryFn: () => getTrips(params),
     ...opts?.query,
   })
 }

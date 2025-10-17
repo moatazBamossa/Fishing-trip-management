@@ -7,16 +7,17 @@ import {
   UseQueryResult,
 } from '@tanstack/react-query'
 import { HTTPValidationError } from '../apiType.type'
-import { publicApi } from '../publicApi'
+import { GetParamsType, publicApi } from '../publicApi'
 import { BoatParamsType, BoatsResponseT } from './useBoats.type'
 
 // Query Key
-export const getAllBoatsQueryKey = ['get_all_boats']
+export const getAllBoatsQueryKey = (params?: GetParamsType) => ['get_all_boats', params]
 //api
-const getBoats = (): Promise<BoatsResponseT> =>
+const getBoats = (params?: GetParamsType): Promise<BoatsResponseT> =>
   publicApi({
     method: 'GET',
     url: `/boats`,
+    params,
   })
 
 const createBoats = (params: BoatParamsType): Promise<BoatsResponseT> =>
@@ -42,12 +43,16 @@ const deleteBoat = (boatId: number): Promise<BoatsResponseT> =>
   })
 
 // hock
-export const useGetBoats = <TData = BoatsResponseT, TError = HTTPValidationError>(opts?: {
-  query?: Omit<UseQueryOptions<BoatsResponseT, TError, TData>, 'queryKey' | 'queryFn'>
-}): UseQueryResult<TData, TError> => {
+
+export const useGetBoats = <TData = BoatsResponseT, TError = HTTPValidationError>(
+  params?: GetParamsType,
+  opts?: {
+    query?: Omit<UseQueryOptions<BoatsResponseT, TError, TData>, 'queryKey' | 'queryFn'>
+  },
+): UseQueryResult<TData, TError> => {
   return useQuery({
-    queryKey: getAllBoatsQueryKey,
-    queryFn: getBoats,
+    queryKey: getAllBoatsQueryKey(params),
+    queryFn: () => getBoats(params),
     ...opts?.query,
   })
 }

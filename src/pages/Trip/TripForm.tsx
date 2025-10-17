@@ -12,11 +12,12 @@ import { Button } from '@/components/ui/button'
 
 import { TripParamsType } from '@/api/Trip/useTrip.trip'
 import LoadingSVG from '@/components/ui/LoadingSVG'
-import { useCreateTrip, useUpdateTrip } from '@/api/Trip/useTrip'
+import { useCreateTrip, useGetTripById, useUpdateTrip } from '@/api/Trip/useTrip'
 import TripContent from './TripContent'
 
 type TripFormType = {
-  initialValue?: Partial<TripParamsType> & { id?: number }
+  // initialValue?: Partial<TripParamsType> & { id?: number }
+  tripId?: number
   onSubmit?: (values: TripParamsType) => void
   fetching?: boolean
   handelCloseDialog: () => void
@@ -24,12 +25,23 @@ type TripFormType = {
 }
 
 const TripForm = (props: TripFormType) => {
-  const { initialValue } = props
+  const { tripId } = props
 
   const { mutate: createTrip, isPending: creating } = useCreateTrip()
   const { mutate: updateTrip, isPending: updating } = useUpdateTrip()
 
-  const textBTN = initialValue?.id ? 'Update' : 'Add'
+  const {
+    data: trip,
+    isLoading: loading,
+    isFetching: fetching,
+  } = useGetTripById(tripId, {
+    query: {
+      enabled: !!tripId,
+      select: (response) => response.data,
+    },
+  })
+
+  const textBTN = tripId ? 'Update' : 'Add'
   const onSubmit = (values: TripParamsType) => {
     if (values?.id) {
       return updateTrip(values, {
@@ -40,9 +52,10 @@ const TripForm = (props: TripFormType) => {
       onSuccess: props.handelOnSuccess,
     })
   }
+  if (loading || fetching) return <LoadingSVG />
   return (
     <Form
-      initialValues={initialValue}
+      initialValues={trip}
       onSubmit={onSubmit}
     >
       {({ handleSubmit, valid, dirty }): JSX.Element => (

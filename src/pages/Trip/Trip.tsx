@@ -1,5 +1,5 @@
 import { TableCell, TableRow } from '@/components/ui/table'
-import Shared from '../shared/Shared'
+import Shared, { RowRendererProps } from '../shared/Shared'
 import { NotebookPen, Edit, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import TripForm from './TripForm'
@@ -8,13 +8,6 @@ import { getAllTripQueryKey, useDeleteTrip, useGetTrips } from '@/api/Trip/useTr
 import { useQueryClient } from '@tanstack/react-query'
 import { TripData } from '@/api/Trip/useTrip.trip'
 import { useNavigate } from 'react-router-dom'
-
-type RowRendererProps = {
-  trip: TripData
-  handleEdit: (trip: TripData) => void
-  handleDelete: (trip: TripData) => void
-  handelNavigate: () => void
-}
 
 const columns = [
   { key: 'name', title: 'Trip Name' },
@@ -26,12 +19,13 @@ const columns = [
   { key: 'actions', title: 'Actions', className: 'text-right' },
 ]
 
-const rowRenderer = (props: RowRendererProps): React.ReactNode => {
-  const { trip } = props
+const rowRenderer = (props: RowRendererProps<TripData>): React.ReactNode => {
+  const { data: trip } = props
   return (
     <TableRow
-      onClick={props.handelNavigate}
+      onClick={props?.handleNavigate}
       key={trip.id}
+      className="cursor-pointer hover:bg-gray-50 transition-colors duration-200"
     >
       <TableCell>{trip?.name}</TableCell>
       <TableCell>{trip?.description}</TableCell>
@@ -45,7 +39,7 @@ const rowRenderer = (props: RowRendererProps): React.ReactNode => {
           variant="outline"
           onClick={(e) => {
             e.stopPropagation()
-            props.handleEdit(trip)
+            props.handleEditClick(trip)
           }}
         >
           <Edit className="h-4 w-4" />
@@ -55,7 +49,7 @@ const rowRenderer = (props: RowRendererProps): React.ReactNode => {
           variant="outline"
           onClick={(e) => {
             e.stopPropagation()
-            props.handleDelete(trip)
+            props.handleDeleteClick(trip)
           }}
         >
           <Trash2 className="h-4 w-4 text-destructive" />
@@ -69,12 +63,14 @@ const Trip = () => {
   const [showDialog, setShowDialog] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [selectedTrip, setSelectedTrip] = useState<TripData | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [page, setPage] = useState(1)
 
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   const handelOnSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: getAllTripQueryKey })
+    queryClient.invalidateQueries({ queryKey: [getAllTripQueryKey()[0]] })
     setShowDialog(false)
     setShowDeleteDialog(false)
   }
@@ -85,24 +81,34 @@ const Trip = () => {
     },
   })
   const {
-    data: trips,
+    data,
     isLoading: loading,
     isFetching: fetching,
-  } = useGetTrips({
-    query: {
-      select: (response) => response.data.trips,
+  } = useGetTrips(
+    {
+      limit: 10,
+      page,
+      filters: {
+        search: searchQuery,
+      },
     },
-  })
+    {
+      query: {
+        select: (response) => response.data,
+      },
+    },
+  )
+  const { meta, trips } = data || {}
 
   const addNew = () => {
     setSelectedTrip(null)
     setShowDialog(true)
   }
-  const handleEdit = (trip: TripData) => {
+  const handleEditClick = (trip: TripData) => {
     setShowDialog(true)
     setSelectedTrip(trip)
   }
-  const handleShowDeleteDialog = (trip: TripData) => {
+  const handleDeleteClick = (trip: TripData) => {
     setShowDeleteDialog(true)
     setSelectedTrip(trip)
   }
@@ -120,7 +126,7 @@ const Trip = () => {
       SharedForm={() => (
         <TripForm
           handelCloseDialog={() => setShowDialog(false)}
-          initialValue={selectedTrip}
+          tripId={selectedTrip?.id}
           handelOnSuccess={handelOnSuccess}
         />
       )}
@@ -129,12 +135,13 @@ const Trip = () => {
       columns={columns}
       rowRenderer={(trip: TripData) =>
         rowRenderer({
-          trip,
-          handleEdit,
-          handleDelete: handleShowDeleteDialog,
-          handelNavigate: () => handelNavigate(trip.id),
+          data: trip,
+          handleEditClick,
+          handleDeleteClick,
+          handleNavigate: () => handelNavigate(trip.id),
         })
       }
+      setSearchQuery={setSearchQuery}
       showDialog={showDialog}
       setShowDialog={setShowDialog}
       handelCloseDialog={() => {}}
@@ -144,6 +151,8 @@ const Trip = () => {
         deleteTrip(selectedTrip?.id)
       }}
       isDeletingPending={deleting}
+      pagination={meta?.pagination}
+      setPage={setPage}
     />
   )
 }

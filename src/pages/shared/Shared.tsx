@@ -10,6 +10,10 @@ import {
   DialogFooter,
   DialogClose,
 } from '@/components/ui/dialog'
+import SearchField from '@/components/SearchField'
+import { MetaT } from '@/api/apiType.type'
+import PaginationComponent from '@/components/Pagination/PaginationCompnent'
+import { ArrowBigLeft } from 'lucide-react'
 
 type SharedProps<T = unknown> = {
   title: string
@@ -27,8 +31,21 @@ type SharedProps<T = unknown> = {
   showDeleteDialog: boolean
   setShowDeleteDialog: (open: boolean) => void
   handleDeleteUser: () => void
+  setSearchQuery: (query: string) => void
   isDeletingPending?: boolean
+  isBackButton?: boolean
+  pagination?: MetaT['pagination']
+  setPage: (page: number) => void
+  onBackButtonClicked?: () => void
 }
+
+export type RowRendererProps<T> = {
+  data: T
+  handleEditClick: (data: T) => void
+  handleDeleteClick: (data: T) => void
+  handleNavigate?: () => void
+}
+
 const Shared = (props: SharedProps) => {
   const {
     NewIcon,
@@ -41,13 +58,28 @@ const Shared = (props: SharedProps) => {
     isDeletingPending,
     title,
     skeletonCount = 6,
+    pagination,
+    isBackButton,
+    onBackButtonClicked,
   } = props
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
+        {isBackButton && (
+          <ArrowBigLeft
+            size={30}
+            onClick={onBackButtonClicked}
+          />
+        )}
         <div className="flex gap-2 justify-center items-center">
           <h1 className="text-3xl font-bold">{title}</h1>
         </div>
+        <SearchField
+          onSearch={(query) => {
+            props.setSearchQuery(query)
+          }}
+          placeholder="Search boats"
+        />
         <Button
           onClick={props.addNew}
           className="animate-fade-in"
@@ -65,6 +97,12 @@ const Shared = (props: SharedProps) => {
         rowRenderer={(row) => props.rowRenderer(row)}
       />
 
+      {(pagination?.next || pagination?.prev) && (
+        <PaginationComponent
+          pagination={pagination}
+          onPageChange={props.setPage}
+        />
+      )}
       {/* Add User Dialog */}
       <Dialog
         open={showDialog}
