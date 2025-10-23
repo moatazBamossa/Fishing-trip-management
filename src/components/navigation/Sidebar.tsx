@@ -10,6 +10,7 @@ import {
   ChevronRight,
   ChevronLeft,
   Notebook,
+  BadgeDollarSign,
 } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Button } from '../ui/button'
@@ -66,6 +67,7 @@ const sidebarItems = ({ isAdmin, isSuperAdmin }) =>
     isSuperAdmin && { to: '/organization', icon: Home, label: 'Organization' },
     isAdmin && { to: '/users', icon: Users, label: 'Users' },
     { to: '/trips', icon: Notebook, label: 'trip' },
+    { to: '/taxes', icon: BadgeDollarSign, label: 'Taxes' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ].filter(Boolean)
 const Sidebar = (props: SidebarProps) => {

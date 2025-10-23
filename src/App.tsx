@@ -14,6 +14,7 @@ import Organization from './pages/Organization'
 import Dashboard from './pages/Dashboard'
 import Users from './pages/Users/Users'
 import Settings from './pages/Settings'
+import Taxes from './pages/Taxes/Taxes'
 import Login from './pages/auth/Login'
 import NotFound from './pages/NotFound'
 import ResetPasswordForm from './pages/auth/ResetPassword'
@@ -79,6 +80,10 @@ const App = () => (
             <Route
               path="/boats"
               element={<Boats />}
+            />
+            <Route
+              path="/taxes"
+              element={<Taxes />}
             />
             <Route
               path="/settings"
